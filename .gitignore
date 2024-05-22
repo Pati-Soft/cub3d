@@ -1,0 +1,5 @@
+*.o
+*.a
+*.dylib
+.bin/
+.DS_Store
