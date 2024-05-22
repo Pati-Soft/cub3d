@@ -1,3 +1,4 @@
+os					=	${shell uname -s}
 CC					=	clang
 RM					=	rm -rf
 DEFINES				=	-D BUFFER_SIZE=65535
@@ -16,19 +17,30 @@ NAME				=	$(BIN_DIR)/$(PROGRAM)
 program_dir			=	$(SRC_DIR)
 
 #lib paths######################################################################
+ifeq "$(os)" "Darwin"
+minilibx_D			=	$(LIB_DIR)/minilibx_mms_20200219/
+else ifeq ($(os),Linux)
+minilibx_D			=	$(LIB_DIR)/minilibx-linux
+endif
+
+libft_D				=	$(LIB_DIR)/libft/
+
+################################################################################
+
+#lib paths######################################################################
 # readline_L		=	-L $(LIB_DIR)/readline/lib/readline/lib -lreadline $(ltinfo)
 # minilibx-linux_L	=	-L $(LIB_DIR)/minilibx-linux -lmlx
 
-minilibx-mms_L	=		-L $(LIB_DIR)/minilibx_mms_20200219/ -lmlx
-libft_L			=		-L $(LIB_DIR)/libft/ -lft
+minilibx-mms_L		=	-L $(minilibx_D) -lmlx
+libft_L				=	-L $(libft_D) -lft
 ################################################################################
 
 #inc paths######################################################################
 # readline_I		=	-I $(LIB_DIR)/readline/lib/readline/include
 # minilibx-linux_I	=	-I $(LIB_DIR)/minilibx-linux/
-minilibx-mms_I		=	-I $(LIB_DIR)/minilibx_mms_20200219/
+minilibx-mms_I		=	-I $(minilibx_D)
 lava_caster_I		=	-I $(program_dir)/inc/
-libft_I				=	-I $(LIB_DIR)/libft/
+libft_I				=	-I $(libft_D)
 
 # murmur_test_I		=	-I $(LIB_DIR)/murmurtest/incs/
 ################################################################################
@@ -36,8 +48,8 @@ libft_I				=	-I $(LIB_DIR)/libft/
 # readline_A		=	$(LIB_DIR)/readline/lib/libreadline.a
 # minilibx-linux_A	=	$(LIB_DIR)/minilibx-linux/libmlx.a
 
-minilibx-mms_A		=	$(LIB_DIR)/minilibx_mms_20200219/libmlx.dylib
-libft_A				=	$(LIB_DIR)/libft/libft.a
+minilibx-mms_A		=	$(minilibx_D)/libmlx.dylib
+libft_A				=	$(libft_D)/libft.a
 
 libr				=	$(minilibx-mms_L) \
 						$(libft_L)
@@ -61,8 +73,7 @@ CMD_OBJS			=	$(CMD:.c=.o)
 DEPENDENCIES		=	$(minilibx-mms_A) $(libft_A)
 
 
-j = 1
-os = ${shell uname -s}
+j = 0
 ifeq '$(os)' 'Darwin'
 NPROCS = $(shell sysctl -n hw.ncpu)
 else ifeq '$(os)' 'Linux'
@@ -128,7 +139,7 @@ $(minilibx-linux_A):
 	$(MAKE) -C $(LIB_DIR)/minilibx-linux/
 
 $(minilibx-mms_A):
-	$(MAKE) -C $(LIB_DIR)/minilibx_mms_20200219/
+	$(MAKE) -j1 -C $(minilibx_D)
 
 $(libft_A):
 	$(MAKE) -C $(LIB_DIR)/libft/
@@ -143,33 +154,29 @@ $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 
 run: all
 	@echo "===================================program======================================\n"
-	DYLD_LIBRARY_PATH=$(LIB_DIR)/minilibx_mms_20200219/ $(leak) ./$(NAME)
+	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME)
 
 clean:
 	$(RM) $(OBJS) $(CMD_OBJS)
-	@# make -C ./libultift clean
+# $(MAKE) -C $(minilibx_D) clean
+# $(MAKE) -C $(libft_D) clean
+# find . -name "*.o" -exec $(RM) '{}' \;
 c: clean
 
 fclean: clean
 	$(RM) $(NAME)
 	$(RM) $(DEPENDENCIES)
-	find . -name "*.o" -exec $(RM) '{}' \;
-# ifeq "$(os)" "Darwin"
-# 		# make -C $(libs)/minilibx_opengl_20191021 clean
-# else ifeq ($(os),Linux)
-# 		make -C $(LIB_DIR)/minilibx-linux clean
-# endif
-# 		# make -C ./libultift fclean & make -C ./lib fclean & rm -f $(NAME) $(BNAME) & wait
 
 f: fclean
 
 re: fclean
 	$(MAKE) all
 
-t:
-	@mkdir -p $(BIN_DIR)
-	@$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
-	@./bin/test
+t: all
+	$(MAKE) clean
+# @mkdir -p $(BIN_DIR)
+# @$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
+# @./bin/test
 
 .PHONY: all clean fclean re run t f c run m b bonus mandatory
 

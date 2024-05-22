@@ -2,3 +2,6 @@
 	path = lib/libft
 	url = https://github.com/murmurlab/libft-pure.git
 	branch = ultimate
+[submodule "lib/minilibx-linux"]
+	path = lib/minilibx-linux
+	url = https://github.com/42Paris/minilibx-linux

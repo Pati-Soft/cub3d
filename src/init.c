@@ -1,9 +1,12 @@
 #include "cub3d.h"
 
-int     load_images(t_cub3d *cub3d)
+int     load_images(t_cub3d *cub3d, int index, char *path)
 {
     (void)cub3d;
-    // mlx_xpm_file_to_image()
+    (void)index;
+    (void)path;
+    // cub3d->images[index] = mlx_xpm_file_to_image(cub3d->mlx,
+    //     );
     return 0;
 }
 
@@ -14,7 +17,7 @@ void    map_init(t_cub3d *cub3d)
     cub3d->player.x = 11;
     cub3d->player.y = 9;
     cub3d->player.direction = cub3d->directions['W'];
-    load_images(cub3d);
+    load_images(cub3d, 0, "path");
 }
 
 void    key_init(t_cub3d *cub3d)
