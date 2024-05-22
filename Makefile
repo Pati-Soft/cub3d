@@ -20,25 +20,31 @@ program_dir			=	$(SRC_DIR)
 # minilibx-linux_L	=	-L $(LIB_DIR)/minilibx-linux -lmlx
 
 minilibx-mms_L	=		-L $(LIB_DIR)/minilibx_mms_20200219/ -lmlx
+libft_L			=		-L $(LIB_DIR)/libft/ -lft
 ################################################################################
 
 #inc paths######################################################################
 # readline_I		=	-I $(LIB_DIR)/readline/lib/readline/include
 # minilibx-linux_I	=	-I $(LIB_DIR)/minilibx-linux/
-minilibx-mms_I	=	-I $(LIB_DIR)/minilibx_mms_20200219/
+minilibx-mms_I		=	-I $(LIB_DIR)/minilibx_mms_20200219/
 lava_caster_I		=	-I $(program_dir)/inc/
+libft_I				=	-I $(LIB_DIR)/libft/
+
 # murmur_test_I		=	-I $(LIB_DIR)/murmurtest/incs/
 ################################################################################
 
-# readline_A			=	$(LIB_DIR)/readline/lib/libreadline.a
+# readline_A		=	$(LIB_DIR)/readline/lib/libreadline.a
 # minilibx-linux_A	=	$(LIB_DIR)/minilibx-linux/libmlx.a
 
-minilibx-mms_A	=	$(LIB_DIR)/minilibx_mms_20200219/libmlx.dylib
+minilibx-mms_A		=	$(LIB_DIR)/minilibx_mms_20200219/libmlx.dylib
+libft_A				=	$(LIB_DIR)/libft/libft.a
 
-libr				=	$(minilibx-mms_L)
+libr				=	$(minilibx-mms_L) \
+						$(libft_L)
 
 
 incs				=	$(lava_caster_I) \
+						$(libft_I) \
 						$(minilibx-mms_I)
 
 CFLAGS				+=	$(incs)
@@ -52,16 +58,19 @@ CMD					=	$(SRC_DIR)/mains/cub3d.c
 CMD_OBJS			=	$(CMD:.c=.o)
 # CMD				=	$(PROGRAM).c
 
-DEPENDENCIES		=	$(minilibx-mms_A)
+DEPENDENCIES		=	$(minilibx-mms_A) $(libft_A)
 
 
+j = 1
 os = ${shell uname -s}
 ifeq '$(os)' 'Darwin'
 NPROCS = $(shell sysctl -n hw.ncpu)
 else ifeq '$(os)' 'Linux'
 NPROCS = $(shell nproc)
 endif
+ifeq '$(j)' '1'
 MAKEFLAGS += -j$(NPROCS)
+endif
 
 w = 1
 ifeq '$(w)' '1'
@@ -92,8 +101,9 @@ CFLAGS += -D TEST=$(test)
 endif
 
 all: $(DEPENDENCIES)
-	@# @mkdir -p $(OBJ_DIR)
+# @mkdir -p $(OBJ_DIR)
 	@$(MAKE) $(NAME)
+# mv *.o $(OBJ_DIR)/
 
 # b: bonus
 
@@ -120,6 +130,9 @@ $(minilibx-linux_A):
 $(minilibx-mms_A):
 	$(MAKE) -C $(LIB_DIR)/minilibx_mms_20200219/
 
+$(libft_A):
+	$(MAKE) -C $(LIB_DIR)/libft/
+
 $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(CMD_OBJS) $(libr) $(OBJS) -o $(NAME)
@@ -140,6 +153,7 @@ c: clean
 fclean: clean
 	$(RM) $(NAME)
 	$(RM) $(DEPENDENCIES)
+	find . -name "*.o" -exec $(RM) '{}' \;
 # ifeq "$(os)" "Darwin"
 # 		# make -C $(libs)/minilibx_opengl_20191021 clean
 # else ifeq ($(os),Linux)

@@ -2,7 +2,8 @@
 
 int     load_images(t_cub3d *cub3d)
 {
-    mlx_xpm_file_to_image()
+    (void)cub3d;
+    // mlx_xpm_file_to_image()
     return 0;
 }
 
