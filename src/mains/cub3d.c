@@ -9,11 +9,12 @@ __attribute__((destructor)) void	destructor(void)
 int main(int argc, char const *argv[])
 {
 	(void)argc;
-	(void)argv;
-	t_cub3d	cub3d = {.map = (char *[])TEMPLE_MAP};
+	t_cub3d	* const cub3d = &(t_cub3d){0};
+	*((char **)&cub3d->map_name) = (char *)argv[1];
+	*(char ***)&cub3d->map = (char *[])TEMPLE_MAP;
 
-	if (init_cub3d(&cub3d))
-		return (dealloc_cub3d(&cub3d), 1);
+	if (init_cub3d(cub3d))
+		return (dealloc_cub3d(cub3d), 1);
 	printf("Hello, world!\n");
 	return 0;
 }

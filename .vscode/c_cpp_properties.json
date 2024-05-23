@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/src/inc",
-                "${workspaceFolder}/lib/minilibx_mms_20200219"
+                "${workspaceFolder}/lib/minilibx_mms_20200219",
+                "${workspaceFolder}/lib/libft"
             ],
             "defines": [],
             "macFrameworkPath": [

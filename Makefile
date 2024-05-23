@@ -63,7 +63,8 @@ CFLAGS				+=	$(incs)
 
 SRCS				=	$(SRC_DIR)/init.c \
 						$(SRC_DIR)/dealloc.c \
-						$(SRC_DIR)/events.c
+						$(SRC_DIR)/events.c \
+						$(SRC_DIR)/utils.c
 OBJS				=	$(SRCS:.c=.o)
 
 CMD					=	$(SRC_DIR)/mains/cub3d.c
@@ -100,8 +101,8 @@ ifeq '$(asan)' '1'
 endif
 
 leak =
-lsan = 1
-ifeq '$(lsan)' '1'
+msl = 0
+ifeq '$(msl)' '1'
 leak=MallocStackLogging=1
 endif
 
@@ -132,9 +133,6 @@ mandatory: all
 # $(lrl):
 # 	$(MAKE) -C lib -j$(NPROCS) DIR=$(PWD)/lib
 
-# r_murmurc:
-# 	make -C ./libultift all -j$(NPROCS)
-
 $(minilibx-linux_A):
 	$(MAKE) -C $(LIB_DIR)/minilibx-linux/
 
@@ -152,7 +150,7 @@ $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@# @mv $@ $(OBJ_DIR)/
 
-run: all
+run: t
 	@echo "===================================program======================================\n"
 	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME)
 
