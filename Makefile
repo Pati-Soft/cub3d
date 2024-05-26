@@ -24,6 +24,7 @@ minilibx_D			=	$(LIB_DIR)/minilibx-linux
 endif
 
 libft_D				=	$(LIB_DIR)/libft/
+murmur_eval_D		=	$(LIB_DIR)/murmur.eval/murmur_eval
 
 ################################################################################
 
@@ -33,6 +34,7 @@ libft_D				=	$(LIB_DIR)/libft/
 
 minilibx-mms_L		=	-L $(minilibx_D) -lmlx
 libft_L				=	-L $(libft_D) -lft
+murmur_eval_L		=	-L $(murmur_eval_D)/build -lmurmureval
 ################################################################################
 
 #inc paths######################################################################
@@ -41,6 +43,7 @@ libft_L				=	-L $(libft_D) -lft
 minilibx-mms_I		=	-I $(minilibx_D)
 lava_caster_I		=	-I $(program_dir)/inc/
 libft_I				=	-I $(libft_D)
+murmur_eval_I		=	-I $(murmur_eval_D)/incs/
 
 # murmur_test_I		=	-I $(LIB_DIR)/murmurtest/incs/
 ################################################################################
@@ -48,30 +51,35 @@ libft_I				=	-I $(libft_D)
 # readline_A		=	$(LIB_DIR)/readline/lib/libreadline.a
 # minilibx-linux_A	=	$(LIB_DIR)/minilibx-linux/libmlx.a
 
+murmur_eval_A		=	$(murmur_eval_D)/build/libmurmureval.a
 minilibx-mms_A		=	$(minilibx_D)/libmlx.dylib
 libft_A				=	$(libft_D)/libft.a
 
 libr				=	$(minilibx-mms_L) \
-						$(libft_L)
+						$(libft_L) \
+						$(murmur_eval_L)
 
 
 incs				=	$(lava_caster_I) \
 						$(libft_I) \
-						$(minilibx-mms_I)
+						$(minilibx-mms_I) \
+						$(murmur_eval_I)
 
 CFLAGS				+=	$(incs)
 
 SRCS				=	$(SRC_DIR)/init.c \
 						$(SRC_DIR)/dealloc.c \
 						$(SRC_DIR)/events.c \
-						$(SRC_DIR)/utils.c
+						$(SRC_DIR)/utils.c \
+						test/tests_1.c
+
 OBJS				=	$(SRCS:.c=.o)
 
 CMD					=	$(SRC_DIR)/mains/cub3d.c
 CMD_OBJS			=	$(CMD:.c=.o)
 # CMD				=	$(PROGRAM).c
 
-DEPENDENCIES		=	$(minilibx-mms_A) $(libft_A)
+DEPENDENCIES		=	$(minilibx-mms_A) $(libft_A) $(murmur_eval_A)
 
 
 j = 0
@@ -109,7 +117,6 @@ endif
 test = 0
 ifeq '$(test)' '1'
 CFLAGS += -D TEST=$(test)
-./$(attest) .
 endif
 
 all: $(DEPENDENCIES)
@@ -133,14 +140,17 @@ mandatory: all
 # $(lrl):
 # 	$(MAKE) -C lib -j$(NPROCS) DIR=$(PWD)/lib
 
+$(murmur_eval_A):
+	$(MAKE) -C $(murmur_eval_D)
+
 $(minilibx-linux_A):
-	$(MAKE) -C $(LIB_DIR)/minilibx-linux/
+	$(MAKE) -C $(minilibx_D)
 
 $(minilibx-mms_A):
 	$(MAKE) -j1 -C $(minilibx_D)
 
 $(libft_A):
-	$(MAKE) -C $(LIB_DIR)/libft/
+	$(MAKE) -C $(LIB_DIR)/libft/ bonus
 
 $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 	@mkdir -p $(BIN_DIR)
@@ -152,7 +162,7 @@ $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 
 run: t
 	@echo "===================================program======================================\n"
-	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME)
+	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME) mapz/an_unnamed.cub
 
 clean:
 	$(RM) $(OBJS) $(CMD_OBJS)

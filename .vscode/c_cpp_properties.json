@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/src/inc",
                 "${workspaceFolder}/lib/minilibx_mms_20200219",
+                "${workspaceFolder}/lib/murmur.eval/murmur_eval/incs",
                 "${workspaceFolder}/lib/libft"
             ],
             "defines": [],

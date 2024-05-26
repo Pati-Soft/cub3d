@@ -3,6 +3,8 @@
         "*.c": "c",
         "cub3d.h": "c",
         "mlx.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "string.h": "c",
+        "murmur_eval.h": "c"
     }
 }

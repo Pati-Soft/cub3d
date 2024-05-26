@@ -26,14 +26,21 @@
 #include "mlx.h"
 #include "libft.h"
 
-# define	EXAMPLE_ERR "followed by an explicit error message :D, sademir.ber \
+# define	EXAMPLE_ERR				"followed by an explicit error message :D, sademir.ber \
 	error\n"
-# define	ERR_MAP_OPEN "Map file cannot be opened\n"
-# define	ERR_TEX_OPEN "Texture file cannot be opened\n"
-# define	ERR_PREFIX "Error\n"
-# define	ERR_MAP_CORRUPTED "corrupted map file\n"
+# define	ERR_EXT_XPM				"Texture file must have .xpm extension\n"
+# define	ERR_MAP_OPEN 			"Map file cannot be opened\n"
+# define	ERR_TEX_OPEN 			"Texture file cannot be opened\n"
+# define	ERR_PREFIX 				"Error\n"
+# define	ERR_MAP_CORRUPTED 		"corrupted map file\n"
+# define	ERR_CLOSE_FD			"close fd error\n"
+# define	ERR_ARGC 				"Usage: ./cub3d <map.cub>\n"
+# define	ERR_MISSING				"Missing elements in map file\n"
+# define	ERR_WRONG_DIR			"Wrong direction in map file\n"
+# define	ERR_NO_SPACE_SEPERATOR	"No space seperator in map file\n"
 
-# define	EXTENSION ".cub"
+# define	MAP_EXTENSION ".cub"
+# define	TEX_EXTENSION ".xpm"
 
 # define    WIN_WIDTH 1920
 # define    WIN_HEIGHT 1080
@@ -74,6 +81,15 @@
 # define   	ON_EXPOSE 12,
 # define   	ON_DESTROY 17
 
+typedef enum e_direction
+{
+	DEFAULT,
+	NO,
+	SO,
+	WE,
+	EA
+}	t_direction;
+
 typedef struct s_player
 {
     int x;
@@ -101,6 +117,7 @@ typedef struct s_cub3d
 
 }	t_cub3d;
 
+int eerr(char *msg);
 int     ft_isspace(int c);
 int err(char *msg);
 int    destroy_window(t_cub3d * const cub3d);
