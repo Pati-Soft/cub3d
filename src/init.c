@@ -23,6 +23,15 @@ t_direction get_direction(char *buff)
     return DEFAULT;
 }
 
+t_color get_color(char *buff)
+{
+    if (!ft_strncmp(TEXT_F, buff, 1))
+        return FLOOR;
+    if (!ft_strncmp(TEXT_C, buff, 1))
+        return CEILING;
+    return DEFAULT;
+}
+
 int check_extension(char const *path, char *ext)
 {
     if (ft_strlen(path) < 4 || ft_strncmp(ext,
@@ -46,45 +55,101 @@ int open2(char *path, int flags, int *fd)
     return 0;
 }
 
+int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
+{
+    t_direction direction;
+    char        *trim;
+
+    direction = get_direction(map_init->buff);
+    if (direction == DEFAULT)
+        return (eerr(ERR_WRONG_DIR));
+    if (!ft_isspace(map_init->buff[2]))
+        return (eerr(ERR_NO_SPACE_SEPERATOR));
+    trim = ft_strtrim(map_init->buff + 3, " \t\v\f\r\n");
+    if (!trim || check_extension(trim, TEX_EXTENSION))
+        return (free(trim), eerr(ERR_EXT_XPM));
+    ft_printf("map path: %s %p\n", trim, ((void **)cub3d->img)[map_init->meta_ct - 1]);
+    ((void **)cub3d->img)[--map_init->meta_ct] = mlx_xpm_file_to_image(cub3d->mlx,
+        trim, (int *)&cub3d->texture_w, (int *)&cub3d->texture_h);
+    free(trim);
+    if (cub3d->img[map_init->meta_ct] == NULL)
+        return (eerr(ERR_TEX_OPEN));
+    if (map_init->meta_ct == 0)
+    {
+        map_init->func = 1;
+        map_init->meta_ct = COLOR_COUNT;
+    }
+    return 0;
+}
+
+int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
+{
+    t_color     color;
+    char        *trim;
+
+    color = get_color(map_init->buff);
+    if (color == DEFAULT)
+        return (eerr(ERR_WRONG_COLOR));
+    if (!ft_isspace(map_init->buff[1]))
+        return (eerr(ERR_NO_SPACE_SEPERATOR));
+    trim = ft_strtrim(map_init->buff + 2, " \t\v\f\r\n");
+    
+    if (!trim || check_extension(trim, TEX_EXTENSION))
+        return (free(trim), eerr(ERR_EXT_XPM));
+    ft_printf("map path: %s %p\n", trim, ((void **)cub3d->img)[map_init->meta_ct - 1]);
+    ((void **)cub3d->img)[--map_init->meta_ct] = mlx_xpm_file_to_image(cub3d->mlx,
+        trim, (int *)&cub3d->texture_w, (int *)&cub3d->texture_h);
+    free(trim);
+    if (cub3d->img[map_init->meta_ct] == NULL)
+        return (eerr(ERR_TEX_OPEN));
+    if (map_init->meta_ct == 0)
+        map_init->func = 1;
+    return 0;
+}
+
+int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
+{
+
+}
+
 int    map_init(t_cub3d * const cub3d)
 {
-    int         fd;
-    char        *buff;
-    int         meta_ct;
-    int         line_i;
-    t_direction direction;
+    t_map_init * const map_init = &(t_map_init){
+        .func = 0,
+        .cont = 1,
+        .meta_ct = IMAGE_COUNT,
+        .parser = {
+            [0]set_texture,
+            [1]set_color,
+            [2]set_map,
+        },
+    };
 
-    line_i = 0;
-    meta_ct = IMAGE_COUNT;
     if (check_extension(cub3d->map_name, MAP_EXTENSION))
         return (eerr(EXAMPLE_ERR));
-    if (open2(cub3d->map_name, O_RDONLY, &fd))
+    if (open2(cub3d->map_name, O_RDONLY, &map_init->fd))
         return (perror(ERR_PREFIX), eerr(ERR_MAP_OPEN));
-    while (meta_ct--)
+    while (map_init->cont)
     {
-        buff = get_next_line(fd);
-        if (!buff)
-            return (close_err(fd), eerr(ERR_MISSING));
-        buff[ft_strlen(buff) - 1] = '\0';
-        direction = get_direction(buff);
-        if (direction == DEFAULT)
-            return (free(buff), close_err(fd), eerr(ERR_WRONG_DIR));
-        line_i += 2;
-        if (!ft_isspace(buff[line_i++]))
-            return (free(buff), close_err(fd), eerr(ERR_NO_SPACE_SEPERATOR));
-        ft_printf("buff: %s\n", buff + line_i);
-        if (check_extension(buff + line_i, TEX_EXTENSION))
-            return (free(buff), close_err(fd), eerr(ERR_EXT_XPM));
-        ((void **)cub3d->img)[meta_ct - 1] = mlx_xpm_file_to_image(cub3d->mlx,
-            buff + line_i, (int *)&cub3d->texture_w, (int *)&cub3d->texture_h);
-        if (cub3d->img[meta_ct - 1] == NULL)
-            return (eerr(ERR_TEX_OPEN));
-        free(buff);
+        map_init->buff = get_next_line(map_init->fd);
+        if (!map_init->buff && map_init->cont)
+            return (close_err(map_init->fd), eerr(ERR_MISSING));
+        map_init->trim = ft_strtrim(map_init->buff, " \t\v\f\r\n");
+        if (!map_init->trim)
+            return (free(map_init->buff), close_err(map_init->fd), eerr(ERR_MAP_CORRUPTED));
+        free(map_init->buff);
+        map_init->buff = map_init->trim;
+        ft_printf("trim: |%s|\n", map_init->buff);
+        if (*map_init->buff == '\0')
+        {
+            free(map_init->buff);
+            continue;
+        }
+        if (map_init->parser[map_init->func](cub3d, map_init))
+            return (free(map_init->buff), close_err(map_init->fd), 1);
+        free(map_init->buff);
     }
     
-    buff[ft_strlen(buff) - 1] = '\0';
-
-        
     *(int *)&cub3d->map_height = 12;
     *(int *)&cub3d->map_width = 24;
     cub3d->player.x = 11;
@@ -115,9 +180,9 @@ int	init_cub3d(t_cub3d * const cub3d)
     *(int *)&cub3d->directions['S'] = DIRECTION_S;
     *(int *)&cub3d->directions['W'] = DIRECTION_W;
 
+    cub3d->mlx = mlx_init();
     if (map_init(cub3d))
         return 1;
-    cub3d->mlx = mlx_init();
     cub3d->win_mlx = mlx_new_window(cub3d->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
     if (!cub3d->mlx || !cub3d->win_mlx)
         return 1;

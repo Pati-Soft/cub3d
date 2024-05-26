@@ -37,6 +37,7 @@
 # define	ERR_ARGC 				"Usage: ./cub3d <map.cub>\n"
 # define	ERR_MISSING				"Missing elements in map file\n"
 # define	ERR_WRONG_DIR			"Wrong direction in map file\n"
+# define	ERR_WRONG_COLOR			"Wrong color in map file\n"
 # define	ERR_NO_SPACE_SEPERATOR	"No space seperator in map file\n"
 
 # define	MAP_EXTENSION ".cub"
@@ -51,12 +52,16 @@
 # define    TEXT_WE		"WE"
 # define    TEXT_EA		"EA"
 
+# define    TEXT_F		"F"
+# define    TEXT_C		"C"
+
 # define    DIRECTION_N 0
 # define    DIRECTION_E 90
 # define    DIRECTION_S 180
 # define    DIRECTION_W 270
 
 # define    IMAGE_COUNT 4
+# define    COLOR_COUNT 2
 
 # define    TEMPLE_MAP {\
 		"111111111111111111111111",\
@@ -90,6 +95,13 @@ typedef enum e_direction
 	EA
 }	t_direction;
 
+typedef enum e_color
+{
+	DEFAULT,
+	FLOOR,
+	CEILING
+}	t_color;
+
 typedef struct s_player
 {
     int x;
@@ -116,6 +128,17 @@ typedef struct s_cub3d
     t_player    			player;
 
 }	t_cub3d;
+
+typedef	struct s_map_init
+{
+	int         fd;
+    char        *buff;
+    int         cont;
+    int         meta_ct;
+    char        *trim;
+    int         func;
+	int         (*parser[3])(t_cub3d * const cub3d, struct s_map_init *map_init);
+}	t_map_init;
 
 int eerr(char *msg);
 int     ft_isspace(int c);
