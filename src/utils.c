@@ -14,5 +14,34 @@ int eerr(char *msg)
 
 int     ft_isspace(int c)
 {
-    return (c == ' ');
+    return (c == ' ' \
+        || c == '\t' \
+        || c == '\n' \
+        || c == '\v' \
+        || c == '\f' \
+        || c == '\r');
+}
+
+size_t  arrlen(void **arr)
+{
+	size_t	c;
+
+	c = 0;
+	while (arr[c])
+		c++;
+	return (c);
+}
+
+void    free_2d(void **ptr)
+{
+	size_t	c;
+
+	c = 0;
+	while (ptr[c])
+    {
+        free(ptr[c]);
+		c++;
+    }
+    free(ptr);
+	return ;
 }

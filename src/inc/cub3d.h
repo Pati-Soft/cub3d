@@ -26,6 +26,9 @@
 #include "mlx.h"
 #include "libft.h"
 
+# define	ERR_MALLOC				"malloc error\n"
+# define	ERR_NULL				"null error\n"
+
 # define	EXAMPLE_ERR				"followed by an explicit error message :D, sademir.ber \
 	error\n"
 # define	ERR_EXT_XPM				"Texture file must have .xpm extension\n"
@@ -88,7 +91,7 @@
 
 typedef enum e_direction
 {
-	DEFAULT,
+	DEFAULT_DIRECTION,
 	NO,
 	SO,
 	WE,
@@ -97,9 +100,9 @@ typedef enum e_direction
 
 typedef enum e_color
 {
-	DEFAULT,
 	FLOOR,
-	CEILING
+	CEILING,
+	DEFAULT_COLOR,
 }	t_color;
 
 typedef struct s_player
@@ -118,8 +121,7 @@ typedef struct s_cub3d
 	void const * const		img[IMAGE_COUNT];
 
 	char const * const		map_name;
-	int						floor_color;
-	int						ceiling_color;
+	int						floor_ceiling[COLOR_COUNT];
 	int const				texture_w;
 	int const				texture_h;
 	int const				map_width;
@@ -140,6 +142,8 @@ typedef	struct s_map_init
 	int         (*parser[3])(t_cub3d * const cub3d, struct s_map_init *map_init);
 }	t_map_init;
 
+size_t  arrlen(void **arr);
+void    free_2d(void **ptr);
 int eerr(char *msg);
 int     ft_isspace(int c);
 int err(char *msg);
