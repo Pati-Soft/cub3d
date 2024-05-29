@@ -5,6 +5,7 @@
         "mlx.h": "c",
         "stdlib.h": "c",
         "string.h": "c",
-        "murmur_eval.h": "c"
+        "murmur_eval.h": "c",
+        "stddef.h": "c"
     }
 }
