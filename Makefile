@@ -21,10 +21,11 @@ ifeq "$(os)" "Darwin"
 minilibx_D			=	$(LIB_DIR)/minilibx_mms_20200219/
 else ifeq ($(os),Linux)
 minilibx_D			=	$(LIB_DIR)/minilibx-linux
+minilibx_flags		=	-lXext -lX11 -lm
 endif
 
 libft_D				=	$(LIB_DIR)/libft/
-murmur_eval_D		=	$(LIB_DIR)/murmur.eval/murmur_eval
+murmur_eval_D		=	$(LIB_DIR)/murmur-eval/murmur_eval
 
 ################################################################################
 
@@ -32,7 +33,7 @@ murmur_eval_D		=	$(LIB_DIR)/murmur.eval/murmur_eval
 # readline_L		=	-L $(LIB_DIR)/readline/lib/readline/lib -lreadline $(ltinfo)
 # minilibx-linux_L	=	-L $(LIB_DIR)/minilibx-linux -lmlx
 
-minilibx-mms_L		=	-L $(minilibx_D) -lmlx
+minilibx-mms_L		=	-L $(minilibx_D) -lmlx $(minilibx_flags)
 libft_L				=	-L $(libft_D) -lft
 murmur_eval_L		=	-L $(murmur_eval_D)/build -lmurmureval
 ################################################################################
@@ -154,7 +155,7 @@ $(libft_A):
 
 $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CMD_OBJS) $(libr) $(OBJS) -o $(NAME)
+	$(CC) $(CMD_OBJS) $(OBJS) $(libr) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
