@@ -9,3 +9,5 @@
 	path = lib/murmur-eval
 	url = https://github.com/murmurlab/murmur.eval.git
 	branch = master
+[submodule "lib/libft/"]
+	branch = ultimate
