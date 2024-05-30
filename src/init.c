@@ -112,7 +112,6 @@ int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
 	char        *trim;
 
 	color = get_color(map_init->buff);
-	ft_printf("color enum: %d\n", color);
 	if (color == DEFAULT_COLOR)
 		return (eerr(ERR_WRONG_COLOR));
 	if (!ft_isspace(map_init->buff[1]))
@@ -124,18 +123,32 @@ int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
 	if (set_rgb(trim, &cub3d->floor_ceiling[color]))
 		return (free(trim), eerr(ERR_WRONG_COLOR));
 
-	ft_printf("map path: %s %p\n", trim, ((void **)cub3d->img)[map_init->meta_ct - 1]);
+	ft_printf("map path: %s\n", trim);
 	free(trim);
-	ft_printf("f color: %d\n", cub3d->floor_ceiling[0] >> 24);
-	ft_printf("c color: %d\n", cub3d->floor_ceiling[1]);
-	if (map_init->meta_ct == 0)
-		map_init->func = 1;
+	ft_printf("%d color: %d, %d, %d, %d\n", color, cub3d->floor_ceiling[color] >> 24,
+			(cub3d->floor_ceiling[color] >> 16) & 0x000000ff,
+			(cub3d->floor_ceiling[color] >> 8)  & 0x000000ff,
+			(cub3d->floor_ceiling[color] >> 0)  & 0x000000ff);
+	if (--map_init->meta_ct == 0)
+		map_init->func = 3;
 	return 0;
 }
 
 int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
 {
+	ft_printf("set_map()");
+	*(int *)&cub3d->map_height = 12;
+	*(int *)&cub3d->map_width = 24;
+	cub3d->player.x = 11;
+	cub3d->player.y = 9;
+	cub3d->player.direction = cub3d->directions['W'];
 
+	return (0);
+}
+
+int		cont_end(t_cub3d * const cub3d, struct s_map_init *map_init)
+{
+	map_init->cont = 0;
 	return (0);
 }
 
@@ -149,6 +162,7 @@ int    map_init(t_cub3d * const cub3d)
 			[0] = set_texture,
 			[1] = set_color,
 			[2] = set_map,
+			[3] = cont_end,
 		},
 	};
 
@@ -176,12 +190,7 @@ int    map_init(t_cub3d * const cub3d)
 			return (free(map_init->buff), close_err(map_init->fd), 1);
 		free(map_init->buff);
 	}
-	
-	*(int *)&cub3d->map_height = 12;
-	*(int *)&cub3d->map_width = 24;
-	cub3d->player.x = 11;
-	cub3d->player.y = 9;
-	cub3d->player.direction = cub3d->directions['W'];
+	set_map(cub3d, map_init);
 	return (0);    
 }
 

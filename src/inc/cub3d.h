@@ -64,7 +64,7 @@
 # define    DIRECTION_W 270
 
 # define    IMAGE_COUNT 4
-# define    COLOR_COUNT 2
+# define    COLOR_COUNT 1
 
 # define    TEMPLE_MAP {\
 		"111111111111111111111111",\
@@ -121,7 +121,7 @@ typedef struct s_cub3d
 	void const * const		img[IMAGE_COUNT];
 
 	char const * const		map_name;
-	int						floor_ceiling[COLOR_COUNT];
+	unsigned int						floor_ceiling[COLOR_COUNT];
 	int const				texture_w;
 	int const				texture_h;
 	int const				map_width;
@@ -139,7 +139,7 @@ typedef	struct s_map_init
     int         meta_ct;
     char        *trim;
     int         func;
-	int         (*parser[3])(t_cub3d * const cub3d, struct s_map_init *map_init);
+	int         (*parser[4])(t_cub3d * const cub3d, struct s_map_init *map_init);
 }	t_map_init;
 
 size_t  arrlen(void **arr);
