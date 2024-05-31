@@ -55,7 +55,7 @@ int open2(char const * const path, int flags, int *fd)
 	return 0;
 }
 
-int     set_rgb(char *buff, int *color)
+int     set_rgb(char *buff, unsigned int *color)
 {
 	char	**split = ft_split(buff, ',');
 	int		arr[3];
@@ -76,9 +76,6 @@ int     set_rgb(char *buff, int *color)
 
 int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 {
-	//◦ Except for the map, each type of information from an element can be separated
-	// by one or more space(s).
-
 	t_direction direction;
 	char        *trim;
 
@@ -130,7 +127,7 @@ int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
 			(cub3d->floor_ceiling[color] >> 8)  & 0x000000ff,
 			(cub3d->floor_ceiling[color] >> 0)  & 0x000000ff);
 	if (--map_init->meta_ct == 0)
-		map_init->func = 3;
+		map_init->cont = 0;
 	return 0;
 }
 
@@ -146,15 +143,10 @@ int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
 	return (0);
 }
 
-int		cont_end(t_cub3d * const cub3d, struct s_map_init *map_init)
-{
-	map_init->cont = 0;
-	return (0);
-}
 
-int    map_init(t_cub3d * const cub3d)
+void	init_struct(t_map_init *dest)
 {
-	t_map_init * const map_init = &(t_map_init){
+	*dest = (t_map_init){
 		.func = 0,
 		.cont = 1,
 		.meta_ct = IMAGE_COUNT,
@@ -162,22 +154,20 @@ int    map_init(t_cub3d * const cub3d)
 			[0] = set_texture,
 			[1] = set_color,
 			[2] = set_map,
-			[3] = cont_end,
 		},
 	};
+}
 
-	if (check_extension(cub3d->map_name, MAP_EXTENSION))
-		return (eerr(EXAMPLE_ERR));
-	if (open2(cub3d->map_name, O_RDONLY, &map_init->fd))
-		return (perror(ERR_PREFIX), eerr(ERR_MAP_OPEN));
+int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
+{
 	while (map_init->cont)
 	{
 		map_init->buff = get_next_line(map_init->fd);
-		if (!map_init->buff && map_init->cont)
-			return (close_err(map_init->fd), eerr(ERR_MISSING));
+		if (!map_init->buff)
+			return (eerr(ERR_MISSING));
 		map_init->trim = ft_strtrim(map_init->buff, " \t\v\f\r\n");
 		if (!map_init->trim)
-			return (free(map_init->buff), close_err(map_init->fd), eerr(ERR_MAP_CORRUPTED));
+			return (free(map_init->buff), eerr(ERR_MAP_CORRUPTED));
 		free(map_init->buff);
 		map_init->buff = map_init->trim;
 		ft_printf("trim: |%s|\n", map_init->buff);
@@ -187,10 +177,48 @@ int    map_init(t_cub3d * const cub3d)
 			continue;
 		}
 		if (map_init->parser[map_init->func](cub3d, map_init))
-			return (free(map_init->buff), close_err(map_init->fd), 1);
+			return (free(map_init->buff), 1);
 		free(map_init->buff);
 	}
-	set_map(cub3d, map_init);
+	return (0);
+}
+
+int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
+{
+	map_init->buff = get_next_line(map_init->fd);
+	while (map_init->buff)
+	{
+		// yanlar 1 olmali, en ust ve alt 1 olmali 
+		// bos satir olmamali
+		// gecersiz karakter olmamali
+
+		// if (*map_init->buff == '\0')
+		// {
+		// 	free(map_init->buff);
+		// 	continue;
+		// }
+		// if (map_init->parser[map_init->func](cub3d, map_init))
+		// 	return (free(map_init->buff), 1);
+		free(map_init->buff);
+		map_init->buff = get_next_line(map_init->fd);
+	}
+	return (0);
+}
+
+int    map_init(t_cub3d * const cub3d)
+{
+	t_map_init map_init;
+
+	init_struct(&map_init);
+	if (check_extension(cub3d->map_name, MAP_EXTENSION))
+		return (eerr(EXAMPLE_ERR));
+	if (open2(cub3d->map_name, O_RDONLY, &map_init.fd))
+		return (perror(ERR_PREFIX), eerr(ERR_MAP_OPEN));
+	if (loop_meta_info(&map_init, cub3d))
+		return (close_err(map_init.fd), 1);
+	if (loop_map(&map_init, cub3d))
+		return (close_err(map_init.fd), 1);
+	set_map(cub3d, &map_init);
 	return (0);    
 }
 
