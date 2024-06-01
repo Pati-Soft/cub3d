@@ -183,9 +183,47 @@ int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
 	return (0);
 }
 
+int     validate_canon_char(unsigned int idx, char *c)
+{
+    return (*c != '0' &&
+            *c != '1' &&
+            *c != 'N' &&
+            *c != 'S' &&
+            *c != 'E' &&
+            *c != 'W');
+}
+
+int     validate_top_char(unsigned int idx, char *c)
+{
+    return (*c != ' ' &&
+            *c != '1');
+}
+
+int     validate_row_mid(char *row)
+{
+	if (ft_strsome(row, validate_canon_char) ||
+		row[0] == '0' ||
+		row[ft_strlen(row) - 1] == '0')
+		return (1);
+	return (0);
+}
+
+int     validate_row_top(char *row)
+{
+    if (ft_strsome(row, validate_top_char))
+		return (1);
+	return (0);
+}
+
+int     validate_row_bottom()
+{
+	return (0);
+}
+
 int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 {
 	map_init->buff = get_next_line(map_init->fd);
+    
 	while (map_init->buff)
 	{
 		// yanlar 1 olmali, en ust ve alt 1 olmali 

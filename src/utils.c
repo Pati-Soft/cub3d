@@ -1,5 +1,22 @@
 #include "cub3d.h"
 
+int	ft_strsome(char *s, int (*f)(unsigned int, char *))
+{
+	unsigned int	i;
+
+	i = 0;
+	if (!(*s) || !f)
+		return (0);
+	while (s[i])
+	{
+        if (f(i, &s[i]))
+            return (1);
+		i++;
+	}
+    return (0);
+}
+
+
 int err(char *msg)
 {
     while (*msg) write(2, msg++, 1);

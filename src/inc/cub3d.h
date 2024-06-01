@@ -118,6 +118,7 @@ typedef struct s_cub3d
     void	    			*win_mlx;
 
     char * const * const	map;
+    t_list					*map2;
 	void const * const		img[IMAGE_COUNT];
 
 	char const * const		map_name;
@@ -142,6 +143,11 @@ typedef	struct s_map_init
 	int         (*parser[3])(t_cub3d * const cub3d, struct s_map_init *map_init);
 }	t_map_init;
 
+
+
+
+/* FUNCTIONS */
+int	ft_strsome(char *s, int (*f)(unsigned int, char *));
 size_t  arrlen(void **arr);
 void    free_2d(void **ptr);
 int eerr(char *msg);
