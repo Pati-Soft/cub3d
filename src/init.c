@@ -90,6 +90,7 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 	if (check_extension(trim, TEX_EXTENSION))
 		return (free(trim), eerr(ERR_EXT_XPM));
 	ft_printf("map path: %s %p\n", trim, ((void **)cub3d->img)[map_init->meta_ct - 1]);
+	ft_printf("a %d %p, %p\n", map_init->meta_ct, cub3d->mlx, cub3d->mlx);
 	((void **)cub3d->img)[--map_init->meta_ct] = mlx_xpm_file_to_image(cub3d->mlx,
 		trim, (int *)&cub3d->texture_w, (int *)&cub3d->texture_h);
 	free(trim);
@@ -199,14 +200,14 @@ int     validate_top_char(unsigned int idx, char *c)
             *c != '1');
 }
 
-int     validate_row_mid(char *row)
+int     validate_edge(char *row)
 {
-	if (ft_strsome(row, validate_canon_char) ||
-		row[0] == '0' ||
+	if (row[0] == '0' ||
 		row[ft_strlen(row) - 1] == '0')
 		return (1);
 	return (0);
 }
+// ft_strsome(row, validate_canon_char)
 
 int     validate_row_top(char *row)
 {
@@ -254,8 +255,9 @@ int    map_init(t_cub3d * const cub3d)
 		return (perror(ERR_PREFIX), eerr(ERR_MAP_OPEN));
 	if (loop_meta_info(&map_init, cub3d))
 		return (close_err(map_init.fd), 1);
-	if (loop_map(&map_init, cub3d))
-		return (close_err(map_init.fd), 1);
+	ft_printf("a");
+	// if (loop_map(&map_init, cub3d))
+	// 	return (close_err(map_init.fd), 1);
 	set_map(cub3d, &map_init);
 	return (0);    
 }
