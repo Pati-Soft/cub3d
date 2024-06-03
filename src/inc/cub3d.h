@@ -131,7 +131,7 @@ typedef struct s_cub3d
 	void const * const		img[IMAGE_COUNT];
 
 	char const * const		map_name;
-	unsigned int						floor_ceiling[COLOR_COUNT];
+	unsigned int			floor_ceiling[COLOR_COUNT];
 	int const				texture_w;
 	int const				texture_h;
 	int const				map_width;
@@ -156,6 +156,7 @@ typedef	struct s_map_init
 
 
 /* FUNCTIONS */
+t_list	*ll_nod(t_list *node, int index);
 char	*ft_strrtrim(char const *s1, char const *set);
 int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass);
 size_t  arrlen(void **arr);

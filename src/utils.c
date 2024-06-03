@@ -1,5 +1,16 @@
 #include "cub3d.h"
 
+t_list	*ll_nod(t_list *node, int index)
+{
+	if (index < 0)
+		return (0);
+	while (index-- > 0 && node->next)
+		node = node->next;
+	if (index > -1)
+		return (0);
+	return (node);
+}
+
 char	*ft_strrtrim(char const *s1, char const *set)
 {
 	size_t	i;

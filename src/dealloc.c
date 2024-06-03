@@ -17,7 +17,7 @@ int    destroy_window(t_cub3d *cub3d)
     printf("Window destroyed: %d\n", (mlx_destroy_window(cub3d->mlx, cub3d->win_mlx)));
     cub3d->win_mlx = NULL;
     cub3d->mlx = NULL;
-    dealloc_cub3d(cub3d);
+    // dealloc_cub3d(cub3d);
     exit(0);
     return (0);
 }
