@@ -7,5 +7,6 @@
         "string.h": "c",
         "murmur_eval.h": "c",
         "stddef.h": "c"
-    }
+    },
+    "functionHeaderExtension.headerFilePath": "/Users/ahbasara/sources/repos/cub3d/src/inc/cub3d.h"
 }

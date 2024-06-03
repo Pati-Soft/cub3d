@@ -98,6 +98,15 @@ typedef enum e_direction
 	EA
 }	t_direction;
 
+typedef enum e_char_type
+{
+	NON_SELECT,
+	INVALID_CHAR,
+	SPACE,
+	FRAME,
+	SURROUNDABLE,
+}	t_char_type;
+
 typedef enum e_color
 {
 	FLOOR,
@@ -147,7 +156,8 @@ typedef	struct s_map_init
 
 
 /* FUNCTIONS */
-int	ft_strsome(char *s, int (*f)(unsigned int, char *));
+char	*ft_strrtrim(char const *s1, char const *set);
+int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass);
 size_t  arrlen(void **arr);
 void    free_2d(void **ptr);
 int eerr(char *msg);

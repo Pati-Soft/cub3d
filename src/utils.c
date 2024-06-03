@@ -1,6 +1,18 @@
 #include "cub3d.h"
 
-int	ft_strsome(char *s, int (*f)(unsigned int, char *))
+char	*ft_strrtrim(char const *s1, char const *set)
+{
+	size_t	i;
+
+	if (!s1 || !set)
+		return (0);
+	i = ft_strlen(s1);
+	while (i && ft_strchr(set, s1[i]))
+		i--;
+	return (ft_substr(s1, 0, i + 1));
+}
+
+int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass)
 {
 	unsigned int	i;
 
@@ -9,7 +21,7 @@ int	ft_strsome(char *s, int (*f)(unsigned int, char *))
 		return (0);
 	while (s[i])
 	{
-        if (f(i, &s[i]))
+        if (f(i, &s[i], pass))
             return (1);
 		i++;
 	}
