@@ -42,6 +42,8 @@
 # define	ERR_WRONG_DIR			"Wrong direction in map file\n"
 # define	ERR_WRONG_COLOR			"Wrong color in map file\n"
 # define	ERR_NO_SPACE_SEPERATOR	"No space seperator in map file\n"
+# define	ERR_2MAP				"map 2, 2 map\n"
+# define	ERR_UNVALIDATABLE		"relative invalid line\n"
 
 # define	MAP_EXTENSION ".cub"
 # define	TEX_EXTENSION ".xpm"

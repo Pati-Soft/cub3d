@@ -161,24 +161,22 @@ void	init_struct(t_map_init *dest)
 
 int		skip_empty_line(t_map_init *map_init)
 {
-	map_init->buff = get_next_line(map_init->fd);
-	if (map_init->buff == NULL)
-		return (1);
-	map_init->trim = ft_strtrim(map_init->buff, " \t\v\f\r\n");
-	if (map_init->trim == NULL)
-		return (free(map_init->buff), eerr(ERR_MALLOC));
-	while (*map_init->trim == '\0')
+	while ("false")
 	{
-		free(map_init->buff);
-		free(map_init->trim);
 		map_init->buff = get_next_line(map_init->fd);
 		if (map_init->buff == NULL)
 			return (1);
 		map_init->trim = ft_strtrim(map_init->buff, " \t\v\f\r\n");
 		if (map_init->trim == NULL)
-			return (free(map_init->buff), eerr(ERR_MALLOC));
+			return (eerr(ERR_MALLOC));
+		if (*map_init->trim != '\0')
+			return (0);
+		free(map_init->buff);
+		map_init->buff = NULL;
+		free(map_init->trim);
+		map_init->trim = NULL;
 	}
-	return (0);
+	return (1);
 }
 
 int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
@@ -210,8 +208,9 @@ int     is_surroundable_char(unsigned int idx, char *c, void *p)
 int     validate_top_char(unsigned int idx, char *c, void *p)
 {
 	(void)p;
-    return (*c != ' ' &&
-            *c != '1');
+	(void)idx;
+    return (*c != '1' && \
+			*c != ' ');
 }
 
 int     validate_edge_char(char *row)
@@ -325,6 +324,58 @@ int     validate_row_bot()
 int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 {
 	char *prev;
+
+	prev = NULL;
+	if (skip_empty_line(map_init))
+		return (free(map_init->trim), free(map_init->buff), eerr(ERR_MISSING));
+	free(map_init->trim);
+
+	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+	if (map_init->trim == NULL)
+		return (free(map_init->buff), eerr(ERR_MALLOC));
+	free(map_init->buff);
+	map_init->buff = map_init->trim;
+	ft_printf("validating row: %s\n", map_init->buff);
+	if (validate_row_top(map_init->buff))
+		return (free(map_init->buff), 1);
+	while (1)
+	{
+		ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
+		free(prev);
+		prev = map_init->buff;
+
+		map_init->buff = get_next_line(map_init->fd);
+		if (map_init->buff == NULL)
+		{
+			if (validate_row_top(prev))
+				return (free(prev), eerr(ERR_UNVALIDATABLE));
+			free(prev);
+			break ;
+			// ~ end
+		}
+
+		map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+		if (map_init->trim == NULL)
+			return (free(map_init->buff), free(prev), eerr(ERR_MALLOC));
+		free(map_init->buff);
+		map_init->buff = map_init->trim;
+		ft_printf("validating row: %s\n", map_init->buff);
+		if (validate_row_mid(map_init->buff, prev))
+			return (free(map_init->buff), free(prev), eerr(ERR_UNVALIDATABLE));
+		// yanlar 1 olmali, en ust ve alt 1 olmali 
+		// bos satir olmamali
+
+		// if (*map_init->buff == '\0')
+		// {
+		// 	free(map_init->buff);
+		// 	continue;
+		// }
+		// if (map_init->parser[map_init->func](cub3d, map_init))
+		// 	return (free(map_init->buff), 1);
+	}
+
+	if (skip_empty_line(map_init) == 0)
+		return (free(map_init->trim), eerr(ERR_2MAP));
 
 	if (skip_empty_line(map_init))
 		return (eerr(ERR_MISSING));
