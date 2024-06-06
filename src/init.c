@@ -326,6 +326,7 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 	char *prev;
 
 	prev = NULL;
+	ft_printf("HERE HERE HERE HERE HERE HERE HERE HERE \n");
 	if (skip_empty_line(map_init))
 		return (free(map_init->trim), free(map_init->buff), eerr(ERR_MISSING));
 	free(map_init->trim);
@@ -341,7 +342,7 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 	while (1)
 	{
 		ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
-		free(prev);
+		// free(prev);
 		prev = map_init->buff;
 
 		map_init->buff = get_next_line(map_init->fd);
@@ -349,7 +350,7 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 		{
 			if (validate_row_top(prev))
 				return (free(prev), eerr(ERR_UNVALIDATABLE));
-			free(prev);
+			// free(prev);
 			break ;
 			// ~ end
 		}
@@ -362,71 +363,60 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 		ft_printf("validating row: %s\n", map_init->buff);
 		if (validate_row_mid(map_init->buff, prev))
 			return (free(map_init->buff), free(prev), eerr(ERR_UNVALIDATABLE));
-		// yanlar 1 olmali, en ust ve alt 1 olmali 
-		// bos satir olmamali
-
-		// if (*map_init->buff == '\0')
-		// {
-		// 	free(map_init->buff);
-		// 	continue;
-		// }
-		// if (map_init->parser[map_init->func](cub3d, map_init))
-		// 	return (free(map_init->buff), 1);
 	}
 
 	if (skip_empty_line(map_init) == 0)
 		return (free(map_init->trim), eerr(ERR_2MAP));
 
-	if (skip_empty_line(map_init))
-		return (eerr(ERR_MISSING));
-	free(map_init->trim);
-	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
-	if (map_init->trim == NULL)
-		return (free(map_init->buff), eerr(ERR_MALLOC));
-	free(map_init->buff);
-	map_init->buff = map_init->trim;
-	ft_printf("validating row: %s\n", map_init->buff);
-	if (validate_row_top(map_init->buff))
-		return (free(map_init->buff), 1);
-	ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
-	prev = map_init->buff;
-	map_init->buff = get_next_line(map_init->fd);
-	if (!map_init->buff)
-		return (free(prev), 1);
-	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
-	if (map_init->trim == NULL)
-		return (free(map_init->buff), free(prev), eerr(ERR_MALLOC));
-	free(map_init->buff);
-	map_init->buff = map_init->trim;
-	while (map_init->buff)
-	{
-		ft_printf("validating row: %s\n", map_init->buff);
-		if (validate_row_mid(map_init->buff, prev))
-			return (free(prev), free(map_init->buff), 1);
-		// ft_printf("HERE HERE HERE HERE HERE HERE HERE HERE \n");
-		// free(prev);
-		ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
-		prev = map_init->buff;
-		map_init->buff = get_next_line(map_init->fd);
+	// if (skip_empty_line(map_init))
+	// 	return (eerr(ERR_MISSING));
+	// free(map_init->trim);
+	// map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+	// if (map_init->trim == NULL)
+	// 	return (free(map_init->buff), eerr(ERR_MALLOC));
+	// free(map_init->buff);
+	// map_init->buff = map_init->trim;
+	// ft_printf("validating row: %s\n", map_init->buff);
+	// if (validate_row_top(map_init->buff))
+	// 	return (free(map_init->buff), 1);
+	// ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
+	// prev = map_init->buff;
+	// map_init->buff = get_next_line(map_init->fd);
+	// if (!map_init->buff)
+	// 	return (free(prev), 1);
+	// map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+	// if (map_init->trim == NULL)
+	// 	return (free(map_init->buff), free(prev), eerr(ERR_MALLOC));
+	// free(map_init->buff);
+	// map_init->buff = map_init->trim;
+	// while (map_init->buff)
+	// {
+	// 	ft_printf("validating row: %s\n", map_init->buff);
+	// 	if (validate_row_mid(map_init->buff, prev))
+	// 		return (free(prev), free(map_init->buff), 1);
+	// 	// free(prev);
+	// 	ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
+	// 	prev = map_init->buff;
+	// 	map_init->buff = get_next_line(map_init->fd);
 
-		if (!map_init->buff)
-			break ;
-		map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
-		if (map_init->trim == NULL)
-			return (free(map_init->buff), free(prev), eerr(ERR_MALLOC));
-		free(map_init->buff);
-		map_init->buff = map_init->trim;
-		// yanlar 1 olmali, en ust ve alt 1 olmali 
-		// bos satir olmamali
+	// 	if (!map_init->buff)
+	// 		break ;
+	// 	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+	// 	if (map_init->trim == NULL)
+	// 		return (free(map_init->buff), free(prev), eerr(ERR_MALLOC));
+	// 	free(map_init->buff);
+	// 	map_init->buff = map_init->trim;
+	// 	// yanlar 1 olmali, en ust ve alt 1 olmali 
+	// 	// bos satir olmamali
 
-		// if (*map_init->buff == '\0')
-		// {
-		// 	free(map_init->buff);
-		// 	continue;
-		// }
-		// if (map_init->parser[map_init->func](cub3d, map_init))
-		// 	return (free(map_init->buff), 1);
-	}
+	// 	// if (*map_init->buff == '\0')
+	// 	// {
+	// 	// 	free(map_init->buff);
+	// 	// 	continue;
+	// 	// }
+	// 	// if (map_init->parser[map_init->func](cub3d, map_init))
+	// 	// 	return (free(map_init->buff), 1);
+	// }
 	ft_printf("SUCCESSFULLY VALIDATED\n");
 	for (size_t i = 0; i < ft_lstsize(cub3d->map2); i++)
 		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
@@ -474,8 +464,8 @@ int	init_cub3d(t_cub3d * const cub3d)
 	*(int *)&cub3d->directions['W'] = DIRECTION_W;
 
 	cub3d->mlx = mlx_init();
-	// if (map_init(cub3d))
-	// 	return 1;
+	if (map_init(cub3d))
+		return 1;
 	cub3d->win_mlx = mlx_new_window(cub3d->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
 	if (!cub3d->mlx || !cub3d->win_mlx)
 		return 1;
