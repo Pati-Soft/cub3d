@@ -4,7 +4,7 @@
 __attribute__((destructor)) void	destructor(void)
 {
 	printf("Destructor called\n");
-	system("leaks cub3d");
+	// system("leaks cub3d");
 }
 // static void	ray_cast(t_cub3d * const cub3d)
 // {

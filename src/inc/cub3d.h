@@ -147,6 +147,7 @@ typedef	struct s_map_init
 {
 	int         fd;
     char        *buff;
+	char		*prev;
     int         cont;
     int         meta_ct;
     char        *trim;
