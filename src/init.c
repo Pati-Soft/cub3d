@@ -321,19 +321,8 @@ int     validate_row_bot()
 	return (0);
 }
 
-int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
+static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
 {
-	if (skip_empty_line(map_init))
-		return (free(map_init->trim), free(map_init->buff), eerr(ERR_MISSING));
-	free(map_init->trim);
-	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
-	if (map_init->trim == NULL)
-		return (free(map_init->buff), eerr(ERR_MALLOC));
-	free(map_init->buff);
-	map_init->buff = map_init->trim;
-	ft_printf("validating row: %s\n", map_init->buff);
-	if (validate_row_top(map_init->buff))
-		return (free(map_init->buff), eerr(ERR_UNVALIDATABLE));
 	while (1)
 	{
 		ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
@@ -354,6 +343,25 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 		if (validate_row_mid(map_init->buff, map_init->prev))
 			return (free(map_init->buff), eerr(ERR_UNVALIDATABLE));
 	}
+	return (0);
+}
+
+int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
+{
+	if (skip_empty_line(map_init))
+		return (free(map_init->buff), eerr(ERR_MISSING));
+	free(map_init->trim);
+	ft_printf("%d\n", BUFSIZ);
+	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
+	if (map_init->trim == NULL)
+		return (free(map_init->buff), eerr(ERR_MALLOC));
+	free(map_init->buff);
+	map_init->buff = map_init->trim;
+	ft_printf("validating row: %s\n", map_init->buff);
+	if (validate_row_top(map_init->buff))
+		return (free(map_init->buff), eerr(ERR_UNVALIDATABLE));
+	if (validate_mid(map_init, cub3d))
+		return (1);
 	if (skip_empty_line(map_init) == 0)
 		return (free(map_init->trim), eerr(ERR_2MAP));
 	return (0);
