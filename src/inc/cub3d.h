@@ -44,6 +44,12 @@
 # define	ERR_NO_SPACE_SEPERATOR	"No space seperator in map file\n"
 # define	ERR_2MAP				"map 2, 2 map\n"
 # define	ERR_UNVALIDATABLE		"relative invalid line\n"
+# define	ERR_UNVALIDATABLE1		"relative invalid line 1\n"
+# define	ERR_UNVALIDATABLE2		"relative invalid line 2\n"
+# define	ERR_UNVALIDATABLE3		"relative invalid line 3\n"
+# define	ERR_UNVALIDATABLE4		"relative invalid line 4\n"
+# define	ERR_UNVALIDATABLE5		"relative invalid line 5\n"
+# define	ERR_MULTIPLAYER			"multiplayer dedect\n"
 
 # define	MAP_EXTENSION ".cub"
 # define	TEX_EXTENSION ".xpm"

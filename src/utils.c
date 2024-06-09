@@ -85,14 +85,3 @@ void    free_2d(void **ptr)
     free(ptr);
 	return ;
 }
-
-char int main {
-	int arr[] = {
-		"heellto",
-		"world",
-		ahstesutdht
-	
-		
-		ahmet "aa	n,irsten"
-	}
-}

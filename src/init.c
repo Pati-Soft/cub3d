@@ -137,10 +137,6 @@ int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
 	ft_printf("set_map()\n");
 	*(int *)&cub3d->map_height = ft_lstsize(cub3d->map2);
 	*(int *)&cub3d->map_width = 0;
-	cub3d->player.x = 12;
-	cub3d->player.y = 4;
-	cub3d->player.direction = cub3d->directions['W'];
-
 	return (0);
 }
 
@@ -168,7 +164,7 @@ int		skip_empty_line(t_map_init *map_init)
 			return (1);
 		map_init->trim = ft_strtrim(map_init->buff, " \t\v\f\r\n");
 		if (map_init->trim == NULL)
-			return (eerr(ERR_MALLOC));
+			return (free(map_init->buff), eerr(ERR_MALLOC));
 		if (*map_init->trim != '\0')
 			return (0);
 		free(map_init->buff);
@@ -243,82 +239,92 @@ t_char_type	get_char_type(char c)
 	return (stat);
 }
 
-int     validate_mid_char(unsigned int idx, char *c, void *p)
+void	clear_map(t_cub3d * const cub3d)
 {
-	const size_t	prev_len = ft_strlen(p);
+	ft_lstclear(&cub3d->map2, free);
+}
+
+// int     validate_mid_char(unsigned int idx, char *c, void *p)
+// {
+// 	const size_t	prev_len = ft_strlen(p);
+// 	t_char_type		curr;
+// 	t_char_type		v_prev;
+// 	t_char_type		h_next;
+
+// 	if ((*(c + 1) == '\0') || (idx == 0))
+// 		return (0);
+// 	curr = get_char_type(*c);
+// 	h_next = get_char_type(*(c + 1));
+// 	if ((prev_len - 1) < idx)
+// 		v_prev = INVALID_CHAR;
+// 	else
+// 		v_prev = get_char_type(((char *)p)[idx]);
+// 	if (curr == INVALID_CHAR)
+// 		return (1);
+// 	{
+// 		if (curr == SPACE)
+// 			if (h_next == SURROUNDABLE || v_prev == SURROUNDABLE)
+// 				return (1);
+// 		if (curr == SURROUNDABLE)
+// 			if (h_next == SPACE || v_prev == SPACE || v_prev == INVALID_CHAR)
+// 				return (1);
+// 	}
+// 	return(0);
+// }
+
+int		check_relative(const size_t prev_len, char *row, char *prev, size_t i)
+{
 	t_char_type		curr;
 	t_char_type		v_prev;
 	t_char_type		h_next;
 
-	if ((*(c + 1) == '\0') || (idx == 0))
-		return (0);
-	curr = get_char_type(*c);
-	h_next = get_char_type(*(c + 1));
-	if ((prev_len - 1) < idx)
+	curr = get_char_type(row[i]);
+	h_next = get_char_type(row[i + 1]);
+	if ((prev_len - 1) < i)
 		v_prev = INVALID_CHAR;
 	else
-		v_prev = get_char_type(((char *)p)[idx]);
+		v_prev = get_char_type(prev[i]);
 	if (curr == INVALID_CHAR)
-		return (1);
+		return (1, eerr(ERR_UNVALIDATABLE2));
 	{
 		if (curr == SPACE)
 			if (h_next == SURROUNDABLE || v_prev == SURROUNDABLE)
-				return (1);
+			{
+				ft_printf("%d %d |%c| |%c| %d\n", h_next, v_prev, row[i], prev[i], i);
+				return (1, eerr(ERR_UNVALIDATABLE3));
+			}
 		if (curr == SURROUNDABLE)
 			if (h_next == SPACE || v_prev == SPACE || v_prev == INVALID_CHAR)
-				return (1);
+				return (1, eerr(ERR_UNVALIDATABLE4));
 	}
-	return(0);
+	return (0);
 }
 
-int		validate_row_mid(char *row, char *prev)
+int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 {
 	const size_t	prev_len = ft_strlen(prev);
-	unsigned int	i;
-	t_char_type		curr;
-	t_char_type		v_prev;
-	t_char_type		h_next;
+	size_t			i;
 
 	if (validate_edge_char(row))
-		return (1, eerr("RETURN 1\n"));
+		return (1, eerr(ERR_UNVALIDATABLE1));
 	i = 0;
-	while (row[i])
+	while (row[++i + 1])
 	{
-		if ((row[i + 1] == '\0') || (i == 0))
+		if ((row[i] == 'N' || row[i] == 'S' || row[i] == 'E' || row[i] == 'W'))
 		{
-			i++;
-			continue ;
+			if (cub3d->player.x)
+				return (1, eerr(ERR_MULTIPLAYER));
+			cub3d->player.x = i;
+			cub3d->player.y = ft_lstsize(cub3d->map2) - 1;
+			cub3d->player.direction = cub3d->directions[row[i]];
 		}
-		curr = get_char_type(row[i]);
-		h_next = get_char_type(row[i + 1]);
-		if ((prev_len - 1) < i)
-			v_prev = INVALID_CHAR;
-		else
-			v_prev = get_char_type(prev[i]);
-		if (curr == INVALID_CHAR)
-			return (1, eerr("RETURN 2\n"));
-		{
-			if (curr == SPACE)
-				if (h_next == SURROUNDABLE || v_prev == SURROUNDABLE)
-				{
-					ft_printf("%d %d |%c| |%c| %d\n", h_next, v_prev, row[i], prev[i], i);
-					return (1, eerr("RETURN 3\n"));
-				}
-			if (curr == SURROUNDABLE)
-				if (h_next == SPACE || v_prev == SPACE || v_prev == INVALID_CHAR)
-					return (1, eerr("RETURN 4\n"));
-		}
-		i++;
+		if (check_relative(prev_len, row, prev, i))
+			return (1);
 	}
-	if (prev_len > i)
+	if (prev_len > ++i)
 	if (ft_strsome(prev + i, is_surroundable_char, NULL))
-		return (1, eerr("RETURN 5\n"));
+		return (1, eerr(ERR_UNVALIDATABLE5));
     return (0);
-}
-
-int     validate_row_bot()
-{
-	return (0);
 }
 
 static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
@@ -340,8 +346,8 @@ static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
 		free(map_init->buff);
 		map_init->buff = map_init->trim;
 		ft_printf("validating row: %s\n", map_init->buff);
-		if (validate_row_mid(map_init->buff, map_init->prev))
-			return (free(map_init->buff), eerr(ERR_UNVALIDATABLE));
+		if (validate_row_mid(map_init->buff, map_init->prev, cub3d))
+			return (free(map_init->buff), 1);
 	}
 	return (0);
 }
@@ -349,9 +355,8 @@ static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
 int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 {
 	if (skip_empty_line(map_init))
-		return (free(map_init->buff), eerr(ERR_MISSING));
+		return (eerr(ERR_MISSING));
 	free(map_init->trim);
-	ft_printf("%d\n", BUFSIZ);
 	map_init->trim = ft_strrtrim(map_init->buff, " \t\v\f\r\n");
 	if (map_init->trim == NULL)
 		return (free(map_init->buff), eerr(ERR_MALLOC));
@@ -363,7 +368,7 @@ int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
 	if (validate_mid(map_init, cub3d))
 		return (1);
 	if (skip_empty_line(map_init) == 0)
-		return (free(map_init->trim), eerr(ERR_2MAP));
+		return (free(map_init->trim), free(map_init->buff), eerr(ERR_2MAP));
 	return (0);
 }
 
@@ -379,7 +384,7 @@ int    map_init(t_cub3d * const cub3d)
 	if (loop_meta_info(&map_init, cub3d))
 		return (close_err(map_init.fd), 1);
 	if (loop_map(&map_init, cub3d))
-		return (close_err(map_init.fd), 1);
+		return (close_err(map_init.fd), clear_map(cub3d), 1);
 	set_map(cub3d, &map_init);
 	return (0);
 }
