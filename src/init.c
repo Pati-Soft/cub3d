@@ -285,17 +285,17 @@ int		check_relative(const size_t prev_len, char *row, char *prev, size_t i)
 	else
 		v_prev = get_char_type(prev[i]);
 	if (curr == INVALID_CHAR)
-		return (1, eerr(ERR_UNVALIDATABLE2));
+		return (eerr(ERR_UNVALIDATABLE2));
 	{
 		if (curr == SPACE)
 			if (h_next == SURROUNDABLE || v_prev == SURROUNDABLE)
 			{
 				ft_printf("%d %d |%c| |%c| %d\n", h_next, v_prev, row[i], prev[i], i);
-				return (1, eerr(ERR_UNVALIDATABLE3));
+				return (eerr(ERR_UNVALIDATABLE3));
 			}
 		if (curr == SURROUNDABLE)
 			if (h_next == SPACE || v_prev == SPACE || v_prev == INVALID_CHAR)
-				return (1, eerr(ERR_UNVALIDATABLE4));
+				return (eerr(ERR_UNVALIDATABLE4));
 	}
 	return (0);
 }
@@ -306,14 +306,14 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 	size_t			i;
 
 	if (validate_edge_char(row))
-		return (1, eerr(ERR_UNVALIDATABLE1));
+		return (eerr(ERR_UNVALIDATABLE1));
 	i = 0;
 	while (row[++i + 1])
 	{
 		if ((row[i] == 'N' || row[i] == 'S' || row[i] == 'E' || row[i] == 'W'))
 		{
 			if (cub3d->player.x)
-				return (1, eerr(ERR_MULTIPLAYER));
+				return (eerr(ERR_MULTIPLAYER));
 			cub3d->player.x = i;
 			cub3d->player.y = ft_lstsize(cub3d->map2) - 1;
 			cub3d->player.direction = cub3d->directions[row[i]];
@@ -323,7 +323,7 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 	}
 	if (prev_len > ++i)
 	if (ft_strsome(prev + i, is_surroundable_char, NULL))
-		return (1, eerr(ERR_UNVALIDATABLE5));
+		return (eerr(ERR_UNVALIDATABLE5));
     return (0);
 }
 
