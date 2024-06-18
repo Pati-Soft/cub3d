@@ -74,6 +74,7 @@ SRCS				=	$(SRC_DIR)/init.c \
 						$(SRC_DIR)/dealloc.c \
 						$(SRC_DIR)/events.c \
 						$(SRC_DIR)/utils.c \
+						$(SRC_DIR)/render.c
 
 TEST_SRCS			=	test/tests_1.c
 TEST_OBJS			=	$(TEST_SRCS:.c=.o)

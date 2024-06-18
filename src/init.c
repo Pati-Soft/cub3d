@@ -393,6 +393,7 @@ void    key_init(t_cub3d * const cub3d)
 	mlx_hook(cub3d->win_mlx, ON_DESTROY, 0, destroy_window, cub3d);
 	// mlx_hook(cub3d->win_mlx, 2, 0, key_trigger, cub3d);
 	mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
+	mlx_loop_hook(cub3d->mlx, loop, cub3d);
 	// ft_printf("[DEBUG]: end init event listeners.\n");
 }
 
@@ -420,7 +421,13 @@ int	init_cub3d(t_cub3d * const cub3d)
 		return 1;
 	
 	ft_printf("[LOG]: SCREEN %d %d\n", cub3d->screen_x, cub3d->screen_y);
-	// cub3d->screen_buffer.img = mlx_new_image()
+	cub3d->screen_buffer.img = mlx_new_image(cub3d->mlx, cub3d->screen_x, cub3d->screen_y);
+	cub3d->screen_buffer.addr = (int *)mlx_get_data_addr(cub3d->screen_buffer.img,
+		&cub3d->screen_buffer.bits_per_pixel,
+		&cub3d->screen_buffer.size_line,
+		&cub3d->screen_buffer.endian);
+	if (cub3d->screen_buffer.img == NULL || cub3d->screen_buffer.addr == NULL)
+		return 1;
 	if (map_init(cub3d))
 		return 1;
 	ft_printf("SUCCESSFULLY VALIDATED\n");

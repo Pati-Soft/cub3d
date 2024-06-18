@@ -7,14 +7,21 @@
 **  #  include "./linux.h"
 ** WSL keycodes
 */
-#  define X_KEY_ESC 65307
+#  define MLX_KEY_ESC	65307
+#  define MLX_KEY_Q		113
+
+#  define MLX_KEY_W		119
+#  define MLX_KEY_A		97
+#  define MLX_KEY_S		115
+#  define MLX_KEY_D		100
 
 # elif __APPLE__
 /* OSX. --------------------------------------------------- */
 /*
 ** #  include "./apple.h"
 */
-#  define X_KEY_ESC 53
+#  define MLX_KEY_ESC	53
+#  define MLX_KEY_Q		12
 
 # endif
 
