@@ -60,6 +60,17 @@ typedef struct s_player
     int direction; // degree
 }	t_player;
 
+typedef struct s_image
+{
+	void	*img;
+	int		*addr;
+	int		bits_per_pixel;
+	int		size_line;
+	int		endian;
+	int		width;
+	int		height;
+}				t_image;
+
 typedef struct s_cub3d
 {
     void	    			*mlx;
@@ -67,15 +78,16 @@ typedef struct s_cub3d
 
     char * const * const	map;
     t_list					*map2;
-	void const * const		img[IMAGE_COUNT];
 
+	t_image					textures[IMAGE_COUNT];
+	t_image					screen_buffer;
 	char const * const		map_name;
 	unsigned int			floor_ceiling[COLOR_COUNT];
-	int const				texture_w;
-	int const				texture_h;
 	int const				map_width;
     int const				map_height;
     int const				directions[256];
+	int const				screen_x;
+	int const				screen_y;
     t_player    			player;
 
 }	t_cub3d;
@@ -97,8 +109,8 @@ int	loop(void *param);
 t_list	*ll_nod(t_list *node, int index);
 char	*ft_strrtrim(char const *s1, char const *set);
 int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass);
-size_t  arrlen(void **arr);
-void    free_2d(void **ptr);
+size_t  arrlen(void *arr);
+void    free_2d(void *ptr);
 int eerr(char *msg);
 int     ft_isspace(int c);
 int err(char *msg);

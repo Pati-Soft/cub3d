@@ -1,0 +1,5 @@
+	// cub3d->screen_buffer.img = mlx_new_image()
+
+init screen_buffer and fill floor_ceiling;
+init.c:423
+

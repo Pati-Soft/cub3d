@@ -1,15 +1,5 @@
 #include "cub3d.h"
 
-int     load_images(t_cub3d * const cub3d, int index, char *path)
-{
-	(void)cub3d;
-	(void)index;
-	(void)path;
-	// cub3d->images[index] = mlx_xpm_file_to_image(cub3d->mlx,
-	//     );
-	return 0;
-}
-
 t_direction get_direction(char *buff)
 {
 	if (!ft_strncmp(TEXT_NO, buff, 2))
@@ -89,12 +79,17 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 		return (eerr(ERR_MALLOC));
 	if (check_extension(trim, TEX_EXTENSION))
 		return (free(trim), eerr(ERR_EXT_XPM));
-	ft_printf("map path: %s %p\n", trim, ((void **)cub3d->img)[map_init->meta_ct - 1]);
-	ft_printf("a %d %p, %p\n", map_init->meta_ct, cub3d->mlx, cub3d->mlx);
-	((void **)cub3d->img)[--map_init->meta_ct] = mlx_xpm_file_to_image(cub3d->mlx,
-		trim, (int *)&cub3d->texture_w, (int *)&cub3d->texture_h);
+	ft_printf("map path: %d %s %p\n", map_init->meta_ct - 1, trim, (cub3d->textures)[map_init->meta_ct - 1].img);
+	cub3d->textures[--map_init->meta_ct].img = mlx_xpm_file_to_image(cub3d->mlx,
+		trim, &cub3d->textures[map_init->meta_ct].width, &cub3d->textures[map_init->meta_ct].height);
 	free(trim);
-	if (cub3d->img[map_init->meta_ct] == NULL)
+	cub3d->textures[map_init->meta_ct].addr = (int *)mlx_get_data_addr( \
+		cub3d->textures[map_init->meta_ct].img,
+		&cub3d->textures[map_init->meta_ct].bits_per_pixel,
+		&cub3d->textures[map_init->meta_ct].size_line,
+		&cub3d->textures[map_init->meta_ct].endian);
+	if (cub3d->textures[map_init->meta_ct].img == NULL || \
+		cub3d->textures[map_init->meta_ct].addr == NULL)
 		return (eerr(ERR_TEX_OPEN));
 	if (map_init->meta_ct == 0)
 	{
@@ -134,6 +129,7 @@ int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
 
 int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
 {
+	(void)map_init;
 	ft_printf("set_map()\n");
 	*(int *)&cub3d->map_height = ft_lstsize(cub3d->map2);
 	*(int *)&cub3d->map_width = 0;
@@ -194,6 +190,7 @@ int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
 int     is_surroundable_char(unsigned int idx, char *c, void *p)
 {
 	(void)p;
+	(void)idx;
     return (*c == '0' ||
             *c == 'N' ||
             *c == 'S' ||
@@ -316,7 +313,7 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 				return (eerr(ERR_MULTIPLAYER));
 			cub3d->player.x = i;
 			cub3d->player.y = ft_lstsize(cub3d->map2) - 1;
-			cub3d->player.direction = cub3d->directions[row[i]];
+			cub3d->player.direction = cub3d->directions[(int)row[i]];
 		}
 		if (check_relative(prev_len, row, prev, i))
 			return (1);
@@ -376,6 +373,7 @@ int    map_init(t_cub3d * const cub3d)
 {
 	t_map_init map_init;
 
+	ft_printf("initializing map\n");
 	init_struct(&map_init);
 	if (check_extension(cub3d->map_name, MAP_EXTENSION))
 		return (eerr(EXAMPLE_ERR));
@@ -391,10 +389,11 @@ int    map_init(t_cub3d * const cub3d)
 
 void    key_init(t_cub3d * const cub3d)
 {
+	ft_printf("[LOG]: init event listeners.\n");
 	mlx_hook(cub3d->win_mlx, ON_DESTROY, 0, destroy_window, cub3d);
-	mlx_hook(cub3d->win_mlx, 2, 0, key_trigger, cub3d);
-	// mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
-
+	// mlx_hook(cub3d->win_mlx, 2, 0, key_trigger, cub3d);
+	mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
+	// ft_printf("[DEBUG]: end init event listeners.\n");
 }
 
 /**
@@ -412,15 +411,21 @@ int	init_cub3d(t_cub3d * const cub3d)
 	*(int *)&cub3d->directions['W'] = DIRECTION_W;
 
 	cub3d->mlx = mlx_init();
+	if (cub3d->mlx == NULL)
+		return 1;
+	mlx_get_screen_size(cub3d->mlx, (int *)&cub3d->screen_x, (int *)&cub3d->screen_y);
+	cub3d->win_mlx = mlx_new_window(cub3d->mlx, cub3d->screen_x,
+		cub3d->screen_y, WIN_TITLE);
+	if (cub3d->win_mlx == NULL)
+		return 1;
+	
+	ft_printf("[LOG]: SCREEN %d %d\n", cub3d->screen_x, cub3d->screen_y);
+	// cub3d->screen_buffer.img = mlx_new_image()
 	if (map_init(cub3d))
 		return 1;
 	ft_printf("SUCCESSFULLY VALIDATED\n");
-	for (size_t i = 0; i < ft_lstsize(cub3d->map2); i++)
+	for (size_t i = 0; i < (size_t)ft_lstsize(cub3d->map2); i++)
 		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
-
-	cub3d->win_mlx = mlx_new_window(cub3d->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
-	if (!cub3d->mlx || !cub3d->win_mlx)
-		return 1;
 	key_init(cub3d);
 	mlx_loop(cub3d->mlx);
 	//mlx destroy event

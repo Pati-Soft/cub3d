@@ -19,8 +19,11 @@ program_dir			=	$(SRC_DIR)
 #lib paths######################################################################
 ifeq "$(os)" "Darwin"
 minilibx_D			=	$(LIB_DIR)/minilibx_mms_20200219/
+minilibx_A			=	$(minilibx_D)/libmlx.dylib
+
 else ifeq ($(os),Linux)
 minilibx_D			=	$(LIB_DIR)/minilibx-linux
+minilibx_A			=	$(minilibx_D)/libmlx.a
 minilibx_flags		=	-lXext -lX11 -lm
 endif
 
@@ -33,7 +36,7 @@ murmur_eval_D		=	$(LIB_DIR)/murmur-eval/murmur_eval
 # readline_L		=	-L $(LIB_DIR)/readline/lib/readline/lib -lreadline $(ltinfo)
 # minilibx-linux_L	=	-L $(LIB_DIR)/minilibx-linux -lmlx
 
-minilibx-mms_L		=	-L $(minilibx_D) -lmlx $(minilibx_flags)
+minilibx_L			=	-L $(minilibx_D) -lmlx $(minilibx_flags)
 libft_L				=	-L $(libft_D) -lft
 murmur_eval_L		=	-L $(murmur_eval_D)/build -lmurmureval
 ################################################################################
@@ -41,7 +44,7 @@ murmur_eval_L		=	-L $(murmur_eval_D)/build -lmurmureval
 #inc paths######################################################################
 # readline_I		=	-I $(LIB_DIR)/readline/lib/readline/include
 # minilibx-linux_I	=	-I $(LIB_DIR)/minilibx-linux/
-minilibx-mms_I		=	-I $(minilibx_D)
+minilibx_I			=	-I $(minilibx_D)
 lava_caster_I		=	-I $(program_dir)/inc/
 libft_I				=	-I $(libft_D)
 murmur_eval_I		=	-I $(murmur_eval_D)/incs/
@@ -53,17 +56,16 @@ murmur_eval_I		=	-I $(murmur_eval_D)/incs/
 # minilibx-linux_A	=	$(LIB_DIR)/minilibx-linux/libmlx.a
 
 murmur_eval_A		=	$(murmur_eval_D)/build/libmurmureval.a
-minilibx-mms_A		=	$(minilibx_D)/libmlx.dylib
 libft_A				=	$(libft_D)/libft.a
 
-libr				=	$(minilibx-mms_L) \
+libr				=	$(minilibx_L) \
 						$(libft_L) \
 						$(murmur_eval_L)
 
 
 incs				=	$(lava_caster_I) \
 						$(libft_I) \
-						$(minilibx-mms_I) \
+						$(minilibx_I) \
 						$(murmur_eval_I)
 
 CFLAGS				+=	$(incs)
@@ -72,7 +74,9 @@ SRCS				=	$(SRC_DIR)/init.c \
 						$(SRC_DIR)/dealloc.c \
 						$(SRC_DIR)/events.c \
 						$(SRC_DIR)/utils.c \
-						test/tests_1.c
+
+TEST_SRCS			=	test/tests_1.c
+TEST_OBJS			=	$(TEST_SRCS:.c=.o)
 
 OBJS				=	$(SRCS:.c=.o)
 
@@ -80,8 +84,8 @@ CMD					=	$(SRC_DIR)/mains/cub3d.c
 CMD_OBJS			=	$(CMD:.c=.o)
 # CMD				=	$(PROGRAM).c
 
-DEPENDENCIES		=	$(minilibx-mms_A) $(libft_A) $(murmur_eval_A)
-
+DEPENDENCIES_A		=	$(minilibx_A) $(libft_A) $(murmur_eval_A)
+DEPENDENCIES		=	murmur_eval minilibx libft
 
 j = 0
 ifeq '$(os)' 'Darwin'
@@ -89,13 +93,14 @@ NPROCS = $(shell sysctl -n hw.ncpu)
 else ifeq '$(os)' 'Linux'
 NPROCS = $(shell nproc)
 endif
+
 ifeq '$(j)' '1'
 MAKEFLAGS += -j$(NPROCS)
 endif
 
 w = 1
 ifeq '$(w)' '1'
-CFLAGS += -Wextra -Werror -Wall
+CFLAGS += -Wextra -Werror -Wall -Wvla
 endif
 
 debug = 1
@@ -125,6 +130,16 @@ all: $(DEPENDENCIES)
 	@$(MAKE) $(NAME)
 # mv *.o $(OBJ_DIR)/
 
+murmur_eval:
+	$(MAKE) -C $(murmur_eval_D)
+
+minilibx:
+	$(MAKE) -j1 -C $(minilibx_D)
+
+libft:
+	$(MAKE) -C $(LIB_DIR)/libft/ bonus
+
+
 # b: bonus
 
 m: mandatory
@@ -141,19 +156,8 @@ mandatory: all
 # $(lrl):
 # 	$(MAKE) -C lib -j$(NPROCS) DIR=$(PWD)/lib
 
-$(murmur_eval_A):
-	$(MAKE) -C $(murmur_eval_D)
 
-$(minilibx-linux_A):
-	$(MAKE) -C $(minilibx_D)
-
-$(minilibx-mms_A):
-	$(MAKE) -j1 -C $(minilibx_D)
-
-$(libft_A):
-	$(MAKE) -C $(LIB_DIR)/libft/ bonus
-
-$(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
+$(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES_A)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(CMD_OBJS) $(OBJS) $(libr) -o $(NAME)
 
@@ -161,7 +165,7 @@ $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@# @mv $@ $(OBJ_DIR)/
 
-run: t
+run: all
 	@echo "===================================program======================================\n"
 	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME) mapz/basic.cub
 
@@ -181,8 +185,8 @@ f: fclean
 re: fclean
 	$(MAKE) all
 
-t: all
-	$(MAKE) clean
+test: all
+	# $(MAKE) clean
 # @mkdir -p $(BIN_DIR)
 # @$(CC) $(CFLAGS) $(INC_DIR) test/testing.c test/token_test.c test/dollar_test.c test/equal_primitive.c $(SRCS) -o bin/test
 # @./bin/test

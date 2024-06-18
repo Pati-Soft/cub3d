@@ -7,12 +7,15 @@
 **  #  include "./linux.h"
 ** WSL keycodes
 */
+#  define X_KEY_ESC 65307
 
 # elif __APPLE__
 /* OSX. --------------------------------------------------- */
 /*
 ** #  include "./apple.h"
 */
+#  define X_KEY_ESC 53
+
 # endif
 
 # define	ERR_MALLOC				"malloc error\n"

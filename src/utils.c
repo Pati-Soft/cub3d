@@ -62,26 +62,26 @@ int     ft_isspace(int c)
         || c == '\r');
 }
 
-size_t  arrlen(void **arr)
+size_t  arrlen(void *arr)
 {
 	size_t	c;
 
 	c = 0;
-	while (arr[c])
+	while (((void **)arr)[c])
 		c++;
 	return (c);
 }
 
-void    free_2d(void **ptr)
+void    free_2d(void *ptr)
 {
 	size_t	c;
 
 	c = 0;
-	while (ptr[c])
+	while (((void **)ptr)[c])
     {
-        free(ptr[c]);
+        free(((void **)ptr)[c]);
 		c++;
     }
-    free(ptr);
+    free(((void **)ptr));
 	return ;
 }
