@@ -80,7 +80,8 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 	if (check_extension(trim, TEX_EXTENSION))
 		return (free(trim), eerr(ERR_EXT_XPM));
 	ft_printf("map path: %d %s %p\n", map_init->meta_ct - 1, trim, (cub3d->textures)[map_init->meta_ct - 1].img);
-	cub3d->textures[--map_init->meta_ct].img = mlx_xpm_file_to_image(cub3d->mlx,
+	--map_init->meta_ct;
+	cub3d->textures[map_init->meta_ct].img = mlx_xpm_file_to_image(cub3d->mlx,
 		trim, &cub3d->textures[map_init->meta_ct].width, &cub3d->textures[map_init->meta_ct].height);
 	free(trim);
 	cub3d->textures[map_init->meta_ct].addr = (int *)mlx_get_data_addr( \
@@ -96,6 +97,7 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 		map_init->func = 1;
 		map_init->meta_ct = COLOR_COUNT;
 	}
+
 	return 0;
 }
 
@@ -175,6 +177,7 @@ int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
 {
 	while (map_init->cont)
 	{
+
 		if (skip_empty_line(map_init))
 			return (eerr(ERR_MISSING));
 		free(map_init->buff);
@@ -297,6 +300,54 @@ int		check_relative(const size_t prev_len, char *row, char *prev, size_t i)
 	return (0);
 }
 
+void	ft_set_direction(t_cub3d *cub3d, char c)
+{
+	if (c == NORTH_CHAR)
+	{
+		cub3d->ray.dirx = -1;
+		cub3d->ray.diry = 0;
+	}
+	else if (c == SOUTH_CHAR)
+	{
+		cub3d->ray.dirx = 1;
+		cub3d->ray.diry = 0;
+	}
+	else if (c == WEST_CHAR)
+	{
+		cub3d->ray.dirx = 0;
+		cub3d->ray.diry = -1;
+	}
+	else if (c == EAST_CHAR)
+	{
+		cub3d->ray.dirx = 0;
+		cub3d->ray.diry = 1;
+	}
+}
+
+void	ft_set_plane(t_cub3d *cub3d, char c)
+{
+	if (c == NORTH_CHAR)
+	{
+		cub3d->ray.planex = 0;
+		cub3d->ray.planey = 0.66;
+	}
+	else if (c == SOUTH_CHAR)
+	{
+		cub3d->ray.planex = 0;
+		cub3d->ray.planey = -0.66;
+	}
+	else if (c == WEST_CHAR)
+	{
+		cub3d->ray.planex = -0.66;
+		cub3d->ray.planey = 0;
+	}
+	else if (c == EAST_CHAR)
+	{
+		cub3d->ray.planex = 0.66;
+		cub3d->ray.planey = 0;
+	}
+}
+
 int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 {
 	const size_t	prev_len = ft_strlen(prev);
@@ -312,8 +363,17 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 			if (cub3d->player.x)
 				return (eerr(ERR_MULTIPLAYER));
 			cub3d->player.x = i;
-			cub3d->player.y = ft_lstsize(cub3d->map2) - 1;
+			cub3d->player.y = ft_lstsize(cub3d->map2) - 0;
 			cub3d->player.direction = cub3d->directions[(int)row[i]];
+
+			cub3d->ray.posy = cub3d->player.x + 0.5;
+			cub3d->ray.posx = cub3d->player.y + 0.5;
+
+			ft_set_direction(cub3d, row[i]);
+			ft_set_plane(cub3d, row[i]);
+			printf("player: x: %d, y: %d, direction: %d\n", cub3d->player.x, cub3d->player.y, cub3d->player.direction);
+			row[i] = '0';
+			// getchar();
 		}
 		if (check_relative(prev_len, row, prev, i))
 			return (1);
@@ -389,12 +449,21 @@ int    map_init(t_cub3d * const cub3d)
 
 void    key_init(t_cub3d * const cub3d)
 {
+	mlx_do_key_autorepeatoff(cub3d->mlx);
+	// mlx_do_key_autorepeaton(cub3d->mlx);
 	ft_printf("[LOG]: init event listeners.\n");
 	mlx_hook(cub3d->win_mlx, ON_DESTROY, 0, destroy_window, cub3d);
-	// mlx_hook(cub3d->win_mlx, 2, 0, key_trigger, cub3d);
-	mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
+	mlx_hook(cub3d->win_mlx, 2, (1L<<0), key_press, cub3d);
+	mlx_hook(cub3d->win_mlx, 3, (1L<<1), key_release, cub3d);
+	// mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
 	mlx_loop_hook(cub3d->mlx, loop, cub3d);
 	// ft_printf("[DEBUG]: end init event listeners.\n");
+}
+
+void	pm(t_cub3d *cub3d)
+{
+	for (size_t i = 0; i < (size_t)ft_lstsize(cub3d->map2); i++)
+		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
 }
 
 /**
@@ -415,6 +484,8 @@ int	init_cub3d(t_cub3d * const cub3d)
 	if (cub3d->mlx == NULL)
 		return 1;
 	mlx_get_screen_size(cub3d->mlx, (int *)&cub3d->screen_x, (int *)&cub3d->screen_y);
+	*(int *)&cub3d->screen_x = WIN_WIDTH;
+	*(int *)&cub3d->screen_y = WIN_HEIGHT;
 	cub3d->win_mlx = mlx_new_window(cub3d->mlx, cub3d->screen_x,
 		cub3d->screen_y, WIN_TITLE);
 	if (cub3d->win_mlx == NULL)
@@ -422,18 +493,21 @@ int	init_cub3d(t_cub3d * const cub3d)
 	
 	ft_printf("[LOG]: SCREEN %d %d\n", cub3d->screen_x, cub3d->screen_y);
 	cub3d->screen_buffer.img = mlx_new_image(cub3d->mlx, cub3d->screen_x, cub3d->screen_y);
+	cub3d->screen_buffer.width = cub3d->screen_x;
+	cub3d->screen_buffer.height = cub3d->screen_y;
 	cub3d->screen_buffer.addr = (int *)mlx_get_data_addr(cub3d->screen_buffer.img,
 		&cub3d->screen_buffer.bits_per_pixel,
 		&cub3d->screen_buffer.size_line,
 		&cub3d->screen_buffer.endian);
 	if (cub3d->screen_buffer.img == NULL || cub3d->screen_buffer.addr == NULL)
 		return 1;
+	ft_printf("[LOG]: screen_buffer %d %d\n", cub3d->screen_buffer.width, cub3d->screen_buffer.height);
 	if (map_init(cub3d))
 		return 1;
 	ft_printf("SUCCESSFULLY VALIDATED\n");
-	for (size_t i = 0; i < (size_t)ft_lstsize(cub3d->map2); i++)
-		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
+	pm(cub3d);
 	key_init(cub3d);
+
 	mlx_loop(cub3d->mlx);
 	//mlx destroy event
 	return 0;

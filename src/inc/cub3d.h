@@ -22,6 +22,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <math.h>
 
 # include "mlx.h"
 # include "libft.h"
@@ -58,7 +59,40 @@ typedef struct s_player
     int x;
     int y;
     int direction; // degree
+	int	keys[MOVOMENT_KEY_COUNT + ROTATION_KEY_COUNT];
 }	t_player;
+
+typedef struct s_ray
+{
+	double		posx;
+	double		posy;
+	double		dirx;
+	double		diry;
+	double		planex;
+	double		planey;
+	double		camerax;
+	double		raydirx;
+	double		raydiry;
+	double		deltadistx;
+	double		deltadisty;
+	int			map_x;
+	int			map_y;
+	int			stepx;
+	int			stepy;
+	double		sidedistx;
+	double		sidedisty;
+	int			wall;
+	int			side;
+	double		perpwalldist;
+	int			lineheight;
+	int			drawstart;
+	int			drawend;
+	int			tex_x;
+	double		texstep;
+	double		texpos;
+	int			user_x;
+	int			user_y;
+}	t_ray;
 
 typedef struct s_image
 {
@@ -88,6 +122,7 @@ typedef struct s_cub3d
     int const				directions[256];
 	int const				screen_x;
 	int const				screen_y;
+	t_ray					ray;
     t_player    			player;
 
 }	t_cub3d;
@@ -105,6 +140,11 @@ typedef	struct s_map_init
 }	t_map_init;
 
 /* FUNCTIONS */
+int key_release(int keycode, t_cub3d *cub3d);
+int key_press(int keycode, t_cub3d *cub3d);
+int	ft_player_move(t_cub3d *cub3d);
+void	pm(t_cub3d *cub3d);
+void	zeroer(t_cub3d *cub3d);
 int	loop(void *param);
 t_list	*ll_nod(t_list *node, int index);
 char	*ft_strrtrim(char const *s1, char const *set);
@@ -117,6 +157,6 @@ int err(char *msg);
 int    destroy_window(t_cub3d * const cub3d);
 int	init_cub3d(t_cub3d * const cub3d);
 void    dealloc_cub3d(t_cub3d * const cub3d);
-int key_trigger(int keycode, t_cub3d * const cub3d);
+int key_trigger(int keycode, t_cub3d *const cub3d);
 
 #endif

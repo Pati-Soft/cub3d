@@ -12,8 +12,11 @@
 
 #  define MLX_KEY_W		119
 #  define MLX_KEY_A		97
-#  define MLX_KEY_S		115
-#  define MLX_KEY_D		100
+#  define MLX_KEY_S		114
+#  define MLX_KEY_D		115
+
+#  define MLX_KEY_LARROW	65361
+#  define MLX_KEY_RARROW	65363
 
 # elif __APPLE__
 /* OSX. --------------------------------------------------- */
@@ -53,8 +56,8 @@
 # define	MAP_EXTENSION ".cub"
 # define	TEX_EXTENSION ".xpm"
 
-# define    WIN_WIDTH 1920
-# define    WIN_HEIGHT 1080
+# define    WIN_WIDTH 1920 / 2
+# define    WIN_HEIGHT 1080 / 2
 # define    WIN_TITLE "Cub3D"
 
 # define    TEXT_NO		"NO"
@@ -65,13 +68,36 @@
 # define    TEXT_F		"F"
 # define    TEXT_C		"C"
 
-# define    DIRECTION_N 0
-# define    DIRECTION_E 90
-# define    DIRECTION_S 180
-# define    DIRECTION_W 270
+# define	NORTH_CHAR	'N'
+# define	SOUTH_CHAR	'S'
+# define	WEST_CHAR	'W'
+# define	EAST_CHAR	'E'
+# define	WALL_CHAR	'1'
+# define	FLOOR_CHAR	'0'
 
-# define    IMAGE_COUNT 4
-# define    COLOR_COUNT 2
+# define	RESULATION		64
+
+# define    DIRECTION_N		0
+# define    DIRECTION_E		90
+# define    DIRECTION_S		180
+# define    DIRECTION_W		270
+
+# define    IMAGE_COUNT		4
+# define    COLOR_COUNT		2
+
+# define    MOVOMENT_KEY_COUNT	4
+# define    ROTATION_KEY_COUNT	2
+
+# define	KEY_W_IDX		0
+# define	KEY_A_IDX		1
+# define	KEY_S_IDX		2
+# define	KEY_D_IDX		3
+
+# define	KEY_LARROW_IDX	4
+# define	KEY_RARROW_IDX	5
+
+# define	ROTATION_SPEED	0.01
+# define	MOVEMENT_SPEED	0.05
 
 # define    TEMPLE_MAP {\
 		"111111111111111111111111",\

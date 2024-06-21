@@ -168,7 +168,7 @@ $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES_A)
 
 run: all
 	@echo "===================================program======================================\n"
-	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME) mapz/basic.cub
+	DYLD_LIBRARY_PATH=$(minilibx_D) $(leak) ./$(NAME) mapz/$(map).cub
 
 clean:
 	$(RM) $(OBJS) $(CMD_OBJS)

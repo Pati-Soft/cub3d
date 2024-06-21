@@ -27,9 +27,27 @@ __attribute__((destructor)) void	destructor(void)
 // 	}
 // }
 
+void	zeroer(t_cub3d *cub3d)
+{
+	cub3d->ray.deltadistx = 0;
+	cub3d->ray.deltadisty = 0;
+	cub3d->ray.perpwalldist = 0;
+	cub3d->ray.stepx = 0;
+	cub3d->ray.stepy = 0;
+	cub3d->ray.sidedistx = 0;
+	cub3d->ray.sidedisty = 0;
+	cub3d->ray.map_x = 0;
+	cub3d->ray.map_y = 0;
+	cub3d->ray.side = 0;
+	cub3d->ray.wall = 0;
+	cub3d->ray.raydirx = 0;
+	cub3d->ray.raydiry = 0;
+}
+
 int main(int argc, char const *argv[])
 {
 	t_cub3d	* const cub3d = &(t_cub3d){0};
+	zeroer(cub3d);
 
 	(void)argc;
 	MURMURTEST
