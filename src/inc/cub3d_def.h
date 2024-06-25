@@ -31,8 +31,8 @@
 # define	ERR_MALLOC				"malloc error\n"
 # define	ERR_NULL				"null error\n"
 
-# define	EXAMPLE_ERR				"followed by an explicit error message :D, sademir.ber \
-	error\n"
+# define	EXAMPLE_ERR				"followed by an explicit error message, \
+	sademir.ber error\n"
 # define	ERR_EXT_XPM				"Texture file must have .xpm extension\n"
 # define	ERR_MAP_OPEN 			"Map file cannot be opened\n"
 # define	ERR_TEX_OPEN 			"Texture file cannot be opened\n"
@@ -75,15 +75,15 @@
 # define	WALL_CHAR	'1'
 # define	FLOOR_CHAR	'0'
 
-# define	RESULATION		64
+# define	RESULATION		16
 
-# define    DIRECTION_N		0
-# define    DIRECTION_E		90
-# define    DIRECTION_S		180
-# define    DIRECTION_W		270
+# define    DIR_E		0
+# define    DIR_N		90
+# define    DIR_W		180
+# define    DIR_S		270
 
-# define    IMAGE_COUNT		4
-# define    COLOR_COUNT		2
+# define    IMAGE_COUNT		LAST_DIRECTION - 1
+# define    COLOR_COUNT		DEFAULT_COLOR
 
 # define    MOVOMENT_KEY_COUNT	4
 # define    ROTATION_KEY_COUNT	2
@@ -98,6 +98,10 @@
 
 # define	ROTATION_SPEED	0.01
 # define	MOVEMENT_SPEED	0.05
+
+# define	FOV				0.66
+
+# define	M_PI			3.14159265358979323846
 
 # define    TEMPLE_MAP {\
 		"111111111111111111111111",\

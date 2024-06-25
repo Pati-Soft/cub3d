@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$#" -eq 0 ]; then
+    echo "Running with RUN"
+    make j=1 w=1 map=non_valid_hole run
+fi
+
+case $1 in
+    -re|--re)
+        echo "Running with RE"
+        make j=1 w=1 map=non_valid_hole re
+        make j=1 w=1 map=non_valid_hole run
+    ;;
+    *)
+        echo "invalid option $1"
+    ;;
+esac

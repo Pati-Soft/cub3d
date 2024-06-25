@@ -35,7 +35,8 @@ typedef enum e_direction
 	NO,
 	SO,
 	WE,
-	EA
+	EA,
+	LAST_DIRECTION,
 }	t_direction;
 
 typedef enum e_char_type
@@ -56,18 +57,17 @@ typedef enum e_color
 
 typedef struct s_player
 {
-    int x;
-    int y;
+	double		posx;
+	double		posy;
+	double		dirx;
+	double		diry;
+
     int direction; // degree
 	int	keys[MOVOMENT_KEY_COUNT + ROTATION_KEY_COUNT];
 }	t_player;
 
 typedef struct s_ray
 {
-	double		posx;
-	double		posy;
-	double		dirx;
-	double		diry;
 	double		planex;
 	double		planey;
 	double		camerax;
@@ -90,8 +90,6 @@ typedef struct s_ray
 	int			tex_x;
 	double		texstep;
 	double		texpos;
-	int			user_x;
-	int			user_y;
 }	t_ray;
 
 typedef struct s_image
@@ -110,18 +108,15 @@ typedef struct s_cub3d
     void	    			*mlx;
     void	    			*win_mlx;
 
+	char * const			map_name;
     char * const * const	map;
     t_list					*map2;
 
+	t_list					*textures_success;
 	t_image					textures[IMAGE_COUNT];
+
 	t_image					screen_buffer;
-	char const * const		map_name;
 	unsigned int			floor_ceiling[COLOR_COUNT];
-	int const				map_width;
-    int const				map_height;
-    int const				directions[256];
-	int const				screen_x;
-	int const				screen_y;
 	t_ray					ray;
     t_player    			player;
 
@@ -140,23 +135,26 @@ typedef	struct s_map_init
 }	t_map_init;
 
 /* FUNCTIONS */
-int key_release(int keycode, t_cub3d *cub3d);
-int key_press(int keycode, t_cub3d *cub3d);
-int	ft_player_move(t_cub3d *cub3d);
-void	pm(t_cub3d *cub3d);
-void	zeroer(t_cub3d *cub3d);
+double deg_to_rad(double degrees);
+double rad_to_deg(double radians);
+
+int key_release(int keycode, t_cub3d * const cub3d);
+int key_press(int keycode, t_cub3d * const cub3d);
+int	ft_player_move(t_cub3d * const cub3d);
+void	pm(t_cub3d * const cub3d);
+void	init_variable(t_cub3d * const cub3d, int argc, char const *argv[]);
 int	loop(void *param);
-t_list	*ll_nod(t_list *node, int index);
-char	*ft_strrtrim(char const *s1, char const *set);
+t_list const *ll_nod(t_list const *node, int index);
+char	*ft_strrtrim(char const * const s1, char const * const set);
 int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass);
-size_t  arrlen(void *arr);
+size_t  arrlen(void const *arr);
 void    free_2d(void *ptr);
-int eerr(char *msg);
-int     ft_isspace(int c);
-int err(char *msg);
-int    destroy_window(t_cub3d * const cub3d);
+int eerr(char const * const msg);
+int     ft_isspace(int const c);
+int err(char const *msg);
+int    destroy_game(t_cub3d * const cub3d);
 int	init_cub3d(t_cub3d * const cub3d);
 void    dealloc_cub3d(t_cub3d * const cub3d);
-int key_trigger(int keycode, t_cub3d *const cub3d);
+int	x_isdigit(unsigned int idx, char *curr, void *param);
 
 #endif

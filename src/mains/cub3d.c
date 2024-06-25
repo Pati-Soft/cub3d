@@ -27,8 +27,9 @@ __attribute__((destructor)) void	destructor(void)
 // 	}
 // }
 
-void	zeroer(t_cub3d *cub3d)
+void	init_variable(t_cub3d * const cub3d, int argc, char const *argv[])
 {
+	*((char **)&cub3d->map_name) = (char *)argv[argc - 1];
 	cub3d->ray.deltadistx = 0;
 	cub3d->ray.deltadisty = 0;
 	cub3d->ray.perpwalldist = 0;
@@ -47,18 +48,14 @@ void	zeroer(t_cub3d *cub3d)
 int main(int argc, char const *argv[])
 {
 	t_cub3d	* const cub3d = &(t_cub3d){0};
-	zeroer(cub3d);
+	// bzero(cub3d, sizeof(t_cub3d)); // safe free
 
-	(void)argc;
+	init_variable(cub3d, argc, argv);
 	MURMURTEST
 	if (argc != 2)
-		return (err(ERR_PREFIX), err(ERR_ARGC));
-	*((char **)&cub3d->map_name) = (char *)argv[1];
-	*(char ***)&cub3d->map = (char *[])TEMPLE_MAP;
-
+		return (eerr(ERR_ARGC));
 	if (init_cub3d(cub3d))
 		return (dealloc_cub3d(cub3d), 1);
-	// ray_cast(cub3d);
-	printf("Hello, world!\n");
+	mlx_loop(cub3d->mlx);
 	return 0;
 }

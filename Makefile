@@ -111,8 +111,12 @@ endif
 
 asan = 1
 ifeq '$(asan)' '1'
-# CFLAGS += -fsanitize=address
-# CFLAGS += -fsanitize=thread
+LFLAGS += -fsanitize=address
+endif
+
+tsan = 0
+ifeq '$(tsan)' '1'
+LFLAGS += -fsanitize=thread
 endif
 
 leak =
@@ -160,7 +164,7 @@ mandatory: all
 
 $(NAME): $(CMD_OBJS) $(OBJS) $(DEPENDENCIES_A)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CMD_OBJS) $(OBJS) $(libr) -o $(NAME)
+	$(CC) $(CMD_OBJS) $(OBJS) $(libr) $(LFLAGS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

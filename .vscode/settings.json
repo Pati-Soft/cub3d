@@ -11,7 +11,9 @@
         "string": "c",
         "string_view": "c",
         "random": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "math.h": "c",
+        "cmath": "c"
     },
     "functionHeaderExtension.headerFilePath": "/Users/ahbasara/sources/repos/cub3d/src/inc/cub3d.h"
 }

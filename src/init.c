@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-t_direction get_direction(char *buff)
+t_direction get_direction(char const * const buff)
 {
 	if (!ft_strncmp(TEXT_NO, buff, 2))
 		return NO;
@@ -13,7 +13,7 @@ t_direction get_direction(char *buff)
 	return DEFAULT_DIRECTION;
 }
 
-t_color get_color(char *buff)
+t_color get_color(char const * const buff)
 {
 	if (!ft_strncmp(TEXT_F, buff, 1))
 		return FLOOR;
@@ -22,7 +22,7 @@ t_color get_color(char *buff)
 	return DEFAULT_COLOR;
 }
 
-int check_extension(char const *path, char *ext)
+int check_extension(char const * const path, char const * const ext)
 {
 	if (ft_strlen(path) < 4 || ft_strncmp(ext,
 			path + (ft_strlen(path) - 4), 4))
@@ -30,14 +30,14 @@ int check_extension(char const *path, char *ext)
 	return (0);
 }
 
-void    close_err(int fd)
+void    close_err(int const fd)
 {
 	if (close(fd) == -1)
 		eerr(ERR_CLOSE_FD);
 }
 
 // cause `if ((fd = open(path, flags)) == -1)` is forbidden
-int open2(char const * const path, int flags, int *fd)
+int open2(char const * const path, int const flags, int * const fd)
 {
 	*fd = open(path, flags);
 	if (*fd == -1)
@@ -45,7 +45,7 @@ int open2(char const * const path, int flags, int *fd)
 	return 0;
 }
 
-int     set_rgb(char *buff, unsigned int *color)
+int     set_rgb(char const * const buff, unsigned int * const color)
 {
 	char	**split = ft_split(buff, ',');
 	int		arr[3];
@@ -54,6 +54,10 @@ int     set_rgb(char *buff, unsigned int *color)
 		return (1);
 	if (arrlen(split) != 3)
 		return (free_2d(split), 1);
+	if (ft_strsome(split[0], x_isdigit, NULL) || \
+		ft_strsome(split[1], x_isdigit, NULL) || \
+		ft_strsome(split[2], x_isdigit, NULL))
+		return (free_2d(split), 1);
 	arr[0] = ft_atoi(split[0]);
 	arr[1] = ft_atoi(split[1]);
 	arr[2] = ft_atoi(split[2]);
@@ -61,10 +65,37 @@ int     set_rgb(char *buff, unsigned int *color)
 	if (arr[0] > 255 || arr[1] > 255 || arr[2] > 255 || \
 		arr[0] < 0 || arr[1] < 0 || arr[2] < 0)
 		return (1);
-	return (*color = (arr[0] << 24) | (arr[1] << 16) | (arr[2] << 8) | 0, 0);
+	return (*color = (arr[0] << 16) | (arr[1] << 8) | (arr[2] << 0) | 0, 0);
 }
 
-int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
+int		load_texture(t_cub3d * const cub3d, t_map_init * const map_init, 
+	char * const path)
+{
+	t_list	*idx_node;
+
+	cub3d->textures[map_init->meta_ct].img = mlx_xpm_file_to_image(
+		cub3d->mlx,
+		path,
+		&cub3d->textures[map_init->meta_ct].width,
+		&cub3d->textures[map_init->meta_ct].height);
+	free(path);
+	if (cub3d->textures[map_init->meta_ct].img == NULL)
+		return (eerr(ERR_TEX_OPEN));
+	cub3d->textures[map_init->meta_ct].addr = (int *)mlx_get_data_addr( \
+		cub3d->textures[map_init->meta_ct].img,
+		&cub3d->textures[map_init->meta_ct].bits_per_pixel,
+		&cub3d->textures[map_init->meta_ct].size_line,
+		&cub3d->textures[map_init->meta_ct].endian);
+	if (cub3d->textures[map_init->meta_ct].addr == NULL)
+		return (eerr(ERR_TEX_OPEN));
+	idx_node = ft_lstnew(cub3d->textures[map_init->meta_ct].img);
+	if (idx_node == NULL)
+		return (1);
+	ft_lstadd_back(&cub3d->textures_success, idx_node);
+	return (0);
+}
+
+int     set_texture(t_cub3d * const cub3d, t_map_init * const map_init)
 {
 	t_direction direction;
 	char        *trim;
@@ -81,17 +112,8 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 		return (free(trim), eerr(ERR_EXT_XPM));
 	ft_printf("map path: %d %s %p\n", map_init->meta_ct - 1, trim, (cub3d->textures)[map_init->meta_ct - 1].img);
 	--map_init->meta_ct;
-	cub3d->textures[map_init->meta_ct].img = mlx_xpm_file_to_image(cub3d->mlx,
-		trim, &cub3d->textures[map_init->meta_ct].width, &cub3d->textures[map_init->meta_ct].height);
-	free(trim);
-	cub3d->textures[map_init->meta_ct].addr = (int *)mlx_get_data_addr( \
-		cub3d->textures[map_init->meta_ct].img,
-		&cub3d->textures[map_init->meta_ct].bits_per_pixel,
-		&cub3d->textures[map_init->meta_ct].size_line,
-		&cub3d->textures[map_init->meta_ct].endian);
-	if (cub3d->textures[map_init->meta_ct].img == NULL || \
-		cub3d->textures[map_init->meta_ct].addr == NULL)
-		return (eerr(ERR_TEX_OPEN));
+	if (load_texture(cub3d, map_init, trim))
+		return (1);
 	if (map_init->meta_ct == 0)
 	{
 		map_init->func = 1;
@@ -101,7 +123,7 @@ int     set_texture(t_cub3d * const cub3d, struct s_map_init *map_init)
 	return 0;
 }
 
-int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
+int     set_color(t_cub3d * const cub3d, struct s_map_init * const map_init)
 {
 	t_color     color;
 	char        *trim;
@@ -129,17 +151,21 @@ int     set_color(t_cub3d * const cub3d, struct s_map_init *map_init)
 	return 0;
 }
 
-int     set_map(t_cub3d * const cub3d, struct s_map_init *map_init)
+int     set_map(t_cub3d * const cub3d, struct s_map_init * const map_init)
 {
 	(void)map_init;
+	int	map_height;
+	int	map_width;
 	ft_printf("set_map()\n");
-	*(int *)&cub3d->map_height = ft_lstsize(cub3d->map2);
-	*(int *)&cub3d->map_width = 0;
+	map_height = ft_lstsize(cub3d->map2);
+	map_width = 0;
+	(void)map_height;
+	(void)map_width;
 	return (0);
 }
 
-
-void	init_struct(t_map_init *dest)
+// copy struct content
+void	init_struct(t_map_init * const dest)
 {
 	*dest = (t_map_init){
 		.func = 0,
@@ -153,7 +179,7 @@ void	init_struct(t_map_init *dest)
 	};
 }
 
-int		skip_empty_line(t_map_init *map_init)
+int		skip_empty_line(t_map_init * const map_init)
 {
 	while ("false")
 	{
@@ -173,7 +199,7 @@ int		skip_empty_line(t_map_init *map_init)
 	return (1);
 }
 
-int		loop_meta_info(t_map_init *map_init, t_cub3d *cub3d)
+int		loop_meta_info(t_map_init * const map_init, t_cub3d * const cub3d)
 {
 	while (map_init->cont)
 	{
@@ -209,18 +235,18 @@ int     validate_top_char(unsigned int idx, char *c, void *p)
 			*c != ' ');
 }
 
-int     validate_edge_char(char *row)
+int     validate_edge_char(char const * const row)
 {
 	return (row[0] == '0' || 
 			(row[ft_strlen(row) - 1] == '0'));
 }
 
-int     validate_row_top(char *row)
+int     validate_row_top(char * const row)
 {
 	return (ft_strsome(row, validate_top_char, NULL));
 }
 
-t_char_type	get_char_type(char c)
+t_char_type	get_char_type(char const c)
 {
 	t_char_type	stat;
 
@@ -272,7 +298,8 @@ void	clear_map(t_cub3d * const cub3d)
 // 	return(0);
 // }
 
-int		check_relative(const size_t prev_len, char *row, char *prev, size_t i)
+int		check_relative(const size_t prev_len, char const * const row,
+	char const * const prev, size_t const i)
 {
 	t_char_type		curr;
 	t_char_type		v_prev;
@@ -300,55 +327,28 @@ int		check_relative(const size_t prev_len, char *row, char *prev, size_t i)
 	return (0);
 }
 
-void	ft_set_direction(t_cub3d *cub3d, char c)
+int		player_detected(t_cub3d * const cub3d, char * const row, size_t i)
 {
-	if (c == NORTH_CHAR)
-	{
-		cub3d->ray.dirx = -1;
-		cub3d->ray.diry = 0;
-	}
-	else if (c == SOUTH_CHAR)
-	{
-		cub3d->ray.dirx = 1;
-		cub3d->ray.diry = 0;
-	}
-	else if (c == WEST_CHAR)
-	{
-		cub3d->ray.dirx = 0;
-		cub3d->ray.diry = -1;
-	}
-	else if (c == EAST_CHAR)
-	{
-		cub3d->ray.dirx = 0;
-		cub3d->ray.diry = 1;
-	}
+	if (cub3d->player.posx)
+		return (eerr(ERR_MULTIPLAYER));
+	cub3d->player.posy = i;
+	cub3d->player.posx = ft_lstsize(cub3d->map2) - 0;
+	cub3d->player.direction = (int const [UINT8_MAX]){ \
+		['N'] = DIR_N, ['E'] = DIR_E, ['S'] = DIR_S, ['W'] = DIR_W} \
+		[(int)row[i]];
+	cub3d->player.posy += 0.5;
+	cub3d->player.posx += 0.5;
+	cub3d->player.dirx = sin(deg_to_rad(cub3d->player.direction));
+	cub3d->player.diry = cos(deg_to_rad(cub3d->player.direction));
+	cub3d->ray.planex = cos(deg_to_rad(cub3d->player.direction)) * FOV;
+    cub3d->ray.planey = sin(deg_to_rad(cub3d->player.direction)) * FOV;
+	printf("player: x: %lf, y: %lf, direction: %d\n", cub3d->player.posx,
+		cub3d->player.posy, cub3d->player.direction);
+	row[i] = '0';
+	return (0);
 }
 
-void	ft_set_plane(t_cub3d *cub3d, char c)
-{
-	if (c == NORTH_CHAR)
-	{
-		cub3d->ray.planex = 0;
-		cub3d->ray.planey = 0.66;
-	}
-	else if (c == SOUTH_CHAR)
-	{
-		cub3d->ray.planex = 0;
-		cub3d->ray.planey = -0.66;
-	}
-	else if (c == WEST_CHAR)
-	{
-		cub3d->ray.planex = -0.66;
-		cub3d->ray.planey = 0;
-	}
-	else if (c == EAST_CHAR)
-	{
-		cub3d->ray.planex = 0.66;
-		cub3d->ray.planey = 0;
-	}
-}
-
-int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
+int		validate_row_mid(char * const row, char * const prev, t_cub3d * const cub3d)
 {
 	const size_t	prev_len = ft_strlen(prev);
 	size_t			i;
@@ -359,22 +359,8 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
 	while (row[++i + 1])
 	{
 		if ((row[i] == 'N' || row[i] == 'S' || row[i] == 'E' || row[i] == 'W'))
-		{
-			if (cub3d->player.x)
-				return (eerr(ERR_MULTIPLAYER));
-			cub3d->player.x = i;
-			cub3d->player.y = ft_lstsize(cub3d->map2) - 0;
-			cub3d->player.direction = cub3d->directions[(int)row[i]];
-
-			cub3d->ray.posy = cub3d->player.x + 0.5;
-			cub3d->ray.posx = cub3d->player.y + 0.5;
-
-			ft_set_direction(cub3d, row[i]);
-			ft_set_plane(cub3d, row[i]);
-			printf("player: x: %d, y: %d, direction: %d\n", cub3d->player.x, cub3d->player.y, cub3d->player.direction);
-			row[i] = '0';
-			// getchar();
-		}
+			if (player_detected(cub3d, row, i))
+				return (1);
 		if (check_relative(prev_len, row, prev, i))
 			return (1);
 	}
@@ -384,7 +370,7 @@ int		validate_row_mid(char *row, char *prev, t_cub3d *cub3d)
     return (0);
 }
 
-static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
+static int		validate_mid(t_map_init * const map_init, t_cub3d * const cub3d)
 {
 	while (1)
 	{
@@ -409,7 +395,7 @@ static int		validate_mid(t_map_init *map_init, t_cub3d *cub3d)
 	return (0);
 }
 
-int		loop_map(t_map_init *map_init, t_cub3d *cub3d)
+int		loop_map(t_map_init * const map_init, t_cub3d * const cub3d)
 {
 	if (skip_empty_line(map_init))
 		return (eerr(ERR_MISSING));
@@ -447,12 +433,12 @@ int    map_init(t_cub3d * const cub3d)
 	return (0);
 }
 
-void    key_init(t_cub3d * const cub3d)
+void    hook_init(t_cub3d * const cub3d)
 {
 	mlx_do_key_autorepeatoff(cub3d->mlx);
 	// mlx_do_key_autorepeaton(cub3d->mlx);
 	ft_printf("[LOG]: init event listeners.\n");
-	mlx_hook(cub3d->win_mlx, ON_DESTROY, 0, destroy_window, cub3d);
+	mlx_hook(cub3d->win_mlx, ON_DESTROY, 0, destroy_game, cub3d);
 	mlx_hook(cub3d->win_mlx, 2, (1L<<0), key_press, cub3d);
 	mlx_hook(cub3d->win_mlx, 3, (1L<<1), key_release, cub3d);
 	// mlx_key_hook(cub3d->win_mlx, key_trigger, cub3d);
@@ -460,55 +446,57 @@ void    key_init(t_cub3d * const cub3d)
 	// ft_printf("[DEBUG]: end init event listeners.\n");
 }
 
-void	pm(t_cub3d *cub3d)
+void	pm(t_cub3d * const cub3d)
 {
 	for (size_t i = 0; i < (size_t)ft_lstsize(cub3d->map2); i++)
 		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
 }
 
-/**
- * @brief 
- * 
- * @param cub3d 
- * @return int 
- */
-int	init_cub3d(t_cub3d * const cub3d)
+int	screen_buffer_init(t_cub3d * const cub3d, int screen_x, int screen_y)
 {
-	// bzero(cub3d, sizeof(t_cub3d)); // safe free
-	*(int *)&cub3d->directions['N'] = DIRECTION_N;
-	*(int *)&cub3d->directions['E'] = DIRECTION_E;
-	*(int *)&cub3d->directions['S'] = DIRECTION_S;
-	*(int *)&cub3d->directions['W'] = DIRECTION_W;
-
-	cub3d->mlx = mlx_init();
-	if (cub3d->mlx == NULL)
-		return 1;
-	mlx_get_screen_size(cub3d->mlx, (int *)&cub3d->screen_x, (int *)&cub3d->screen_y);
-	*(int *)&cub3d->screen_x = WIN_WIDTH;
-	*(int *)&cub3d->screen_y = WIN_HEIGHT;
-	cub3d->win_mlx = mlx_new_window(cub3d->mlx, cub3d->screen_x,
-		cub3d->screen_y, WIN_TITLE);
-	if (cub3d->win_mlx == NULL)
-		return 1;
-	
-	ft_printf("[LOG]: SCREEN %d %d\n", cub3d->screen_x, cub3d->screen_y);
-	cub3d->screen_buffer.img = mlx_new_image(cub3d->mlx, cub3d->screen_x, cub3d->screen_y);
-	cub3d->screen_buffer.width = cub3d->screen_x;
-	cub3d->screen_buffer.height = cub3d->screen_y;
-	cub3d->screen_buffer.addr = (int *)mlx_get_data_addr(cub3d->screen_buffer.img,
+	cub3d->screen_buffer.img = mlx_new_image(cub3d->mlx, screen_x, screen_y);
+	if (cub3d->screen_buffer.img == NULL)
+		return (1);
+	cub3d->screen_buffer.width = screen_x;
+	cub3d->screen_buffer.height = screen_y;
+	cub3d->screen_buffer.addr = (int *)mlx_get_data_addr(
+		cub3d->screen_buffer.img,
 		&cub3d->screen_buffer.bits_per_pixel,
 		&cub3d->screen_buffer.size_line,
 		&cub3d->screen_buffer.endian);
-	if (cub3d->screen_buffer.img == NULL || cub3d->screen_buffer.addr == NULL)
-		return 1;
-	ft_printf("[LOG]: screen_buffer %d %d\n", cub3d->screen_buffer.width, cub3d->screen_buffer.height);
+	if (cub3d->screen_buffer.addr == NULL)
+		return (1);
+	return (0);
+}
+
+int	init_mlx(t_cub3d * const cub3d)
+{
+	int				screen_x;
+	int				screen_y;
+
+	cub3d->mlx = mlx_init();
+	if (cub3d->mlx == NULL)
+		return (1);
+	mlx_get_screen_size(cub3d->mlx, &screen_x, &screen_y);
+	screen_x = WIN_WIDTH;
+	screen_y = WIN_HEIGHT;
+	cub3d->win_mlx = \
+		mlx_new_window(cub3d->mlx, screen_x, screen_y, cub3d->map_name);
+	if (cub3d->win_mlx == NULL)
+		return (1);
+	if (screen_buffer_init(cub3d, screen_x, screen_y))
+		return (1);
+	return (0);
+}
+
+int	init_cub3d(t_cub3d * const cub3d)
+{
+	if (init_mlx(cub3d))
+		return (1);
 	if (map_init(cub3d))
-		return 1;
+		return (1);
 	ft_printf("SUCCESSFULLY VALIDATED\n");
 	pm(cub3d);
-	key_init(cub3d);
-
-	mlx_loop(cub3d->mlx);
-	//mlx destroy event
+	hook_init(cub3d);
 	return 0;
 }

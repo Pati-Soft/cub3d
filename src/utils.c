@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-t_list	*ll_nod(t_list *node, int index)
+t_list const *ll_nod(t_list const *node, int index)
 {
 	if (index < 0)
 		return (0);
@@ -11,7 +11,24 @@ t_list	*ll_nod(t_list *node, int index)
 	return (node);
 }
 
-char	*ft_strrtrim(char const *s1, char const *set)
+inline double rad_to_deg(double radians)
+{
+    return radians * (180.0 / M_PI);
+}
+
+inline double deg_to_rad(double degrees)
+{
+    return degrees * M_PI / 180.0;
+}
+
+int	x_isdigit(unsigned int idx, char *curr, void *param)
+{
+	(void)idx;
+	(void)param;
+	return !(*curr >= '0' && *curr <= '9');
+}
+
+char	*ft_strrtrim(char const * const s1, char const * const set)
 {
 	size_t	i;
 
@@ -40,19 +57,19 @@ int	ft_strsome(char *s, int (*f)(unsigned int, char *, void *), void *pass)
 }
 
 
-int err(char *msg)
+int err(char const *msg)
 {
     while (*msg) write(2, msg++, 1);
     return (1);
 }
 
-int eerr(char *msg)
+int eerr(char const * const msg)
 {
     err(ERR_PREFIX);
     return err(msg);
 }
 
-int     ft_isspace(int c)
+int     ft_isspace(int const c)
 {
     return (c == ' ' \
         || c == '\t' \
@@ -62,7 +79,7 @@ int     ft_isspace(int c)
         || c == '\r');
 }
 
-size_t  arrlen(void *arr)
+size_t  arrlen(void const *arr)
 {
 	size_t	c;
 
