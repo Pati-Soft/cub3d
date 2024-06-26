@@ -15,7 +15,7 @@ void	ft_texture_helper(t_cub3d * const cub3d)
 	if (cub3d->ray.side == 1 && cub3d->ray.raydiry < 0)
 		cub3d->ray.tex_x = RESULATION - cub3d->ray.tex_x - 1;
 	cub3d->ray.texstep = 1.0 * RESULATION / cub3d->ray.lineheight;
-	printf("step: %f\n", cub3d->ray.texstep);
+	// printf("step: %f\n", cub3d->ray.texstep);
 	cub3d->ray.texpos = (cub3d->ray.drawstart - cub3d->screen_buffer.height
 			/ 2 + cub3d->ray.lineheight / 2) * cub3d->ray.texstep;
 }
@@ -40,9 +40,9 @@ void	ft_draw_wall_texture(t_cub3d * const cub3d, int const x, int const tex_inde
 		cub3d->ray.drawstart++;
 	}
 	// printf("texpos: (%f) drawstart: (%d), drawend: (%d), diff: (%d), ratio: (diff/64=%f)\n", bak2, bak[0], bak[1], bak[1] - bak[0], (float)abs(bak[1] - bak[0]) / RESULATION);
-	// getchar();
 	// mlx_put_image_to_window(cub3d->mlx, cub3d->win_mlx, cub3d->screen_buffer.img, 0, 0);
 	// mlx_do_sync(cub3d->mlx);
+	// getchar();
 
 }
 

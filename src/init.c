@@ -466,6 +466,10 @@ int	screen_buffer_init(t_cub3d * const cub3d, int screen_x, int screen_y)
 		&cub3d->screen_buffer.endian);
 	if (cub3d->screen_buffer.addr == NULL)
 		return (1);
+	// printf("bits_per_pixel: %d, size_line: %d, endian: %d\n",
+	// 	cub3d->screen_buffer.bits_per_pixel,
+	// 	cub3d->screen_buffer.size_line,
+	// 	cub3d->screen_buffer.endian);
 	return (0);
 }
 
