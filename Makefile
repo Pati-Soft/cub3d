@@ -18,8 +18,12 @@ program_dir			=	$(SRC_DIR)
 
 #lib paths######################################################################
 ifeq "$(os)" "Darwin"
-minilibx_D			=	$(LIB_DIR)/minilibx_mms_20200219/
-minilibx_A			=	$(minilibx_D)/libmlx.dylib
+# minilibx_D			=	$(LIB_DIR)/minilibx_mms_20200219/
+# minilibx_A			=	$(minilibx_D)/libmlx.dylib
+
+minilibx_D			=	$(LIB_DIR)/minilibx_opengl_20191021/
+minilibx_A			=	$(minilibx_D)/libmlx.a
+minilibx_flags		=	-lm -framework OpenGL -framework AppKit
 
 else ifeq ($(os),Linux)
 minilibx_D			=	$(LIB_DIR)/minilibx-linux
@@ -71,10 +75,22 @@ incs				=	$(lava_caster_I) \
 CFLAGS				+=	$(incs)
 
 SRCS				=	$(SRC_DIR)/init.c \
-						$(SRC_DIR)/dealloc.c \
-						$(SRC_DIR)/events.c \
-						$(SRC_DIR)/utils.c \
-						$(SRC_DIR)/render.c
+						$(SRC_DIR)/hook_destroy.c \
+						$(SRC_DIR)/hook_move.c \
+						$(SRC_DIR)/hook_rotate.c \
+						$(SRC_DIR)/hook.c \
+						$(SRC_DIR)/init_cub_map.c \
+						$(SRC_DIR)/init_cub_map1.c \
+						$(SRC_DIR)/init_cub_meta.c \
+						$(SRC_DIR)/init_cub.c \
+						$(SRC_DIR)/init_cub1.c \
+						$(SRC_DIR)/init_mlx.c \
+						$(SRC_DIR)/render.c \
+						$(SRC_DIR)/render1.c \
+						$(SRC_DIR)/utils1.c \
+						$(SRC_DIR)/utils2.c \
+						$(SRC_DIR)/utils3.c \
+
 
 TEST_SRCS			=	test/tests_1.c
 TEST_OBJS			=	$(TEST_SRCS:.c=.o)

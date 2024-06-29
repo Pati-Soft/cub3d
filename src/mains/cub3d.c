@@ -1,33 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/28 09:10:27 by ahbasara          #+#    #+#             */
+/*   Updated: 2024/06/29 03:41:35 by ahbasara         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
-#include "murmur_eval.h"
 
-__attribute__((destructor)) void	destructor(void)
-{
-	printf("Destructor called\n");
-	// system("leaks cub3d");
-}
-// static void	ray_cast(t_cub3d * const cub3d)
+// __attribute__((destructor)) void	destructor(void)
 // {
-// 	double	h_inter;
-// 	double	v_inter;
-// 	int		angle;
-// 	int		ray;
-
-// 	ray = 0;
-// 	angle = cub3d->player.direction - (FOV / 2);
-// 	while (ray < WIN_WIDTH)
-// 	{
-// 		h_inter = horizontal_intercept(cub3d, ray);
-// 		v_inter = vertical_intercept(cub3d, ray);
-// 		if (h_inter < v_inter)
-// 			draw_ray(cub3d, h_inter, ray, 0);
-// 		else
-// 			draw_ray(cub3d, v_inter, ray, 1);
-// 		ray++;
-// 	}
+// 	printf("Destructor called\n");
+// 	system("leaks cub3d");
 // }
 
-void	init_variable(t_cub3d * const cub3d, int argc, char const *argv[])
+void	init_variable(t_cub3d *const cub3d, int argc, char const *argv[])
 {
 	*((char **)&cub3d->map_name) = (char *)argv[argc - 1];
 	cub3d->ray.deltadistx = 0;
@@ -45,17 +36,15 @@ void	init_variable(t_cub3d * const cub3d, int argc, char const *argv[])
 	cub3d->ray.raydiry = 0;
 }
 
-int main(int argc, char const *argv[])
+int	main(int argc, char const *argv[])
 {
-	t_cub3d	* const cub3d = &(t_cub3d){0};
-	// bzero(cub3d, sizeof(t_cub3d)); // safe free
+	t_cub3d *const	cub3d = &(t_cub3d){0};
 
 	init_variable(cub3d, argc, argv);
-	MURMURTEST
 	if (argc != 2)
 		return (eerr(ERR_ARGC));
 	if (init_cub3d(cub3d))
 		return (dealloc_cub3d(cub3d), 1);
 	mlx_loop(cub3d->mlx);
-	return 0;
+	return (0);
 }

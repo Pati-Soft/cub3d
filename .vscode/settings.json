@@ -1,19 +1,20 @@
 {
     "files.associations": {
-        "*.c": "c",
-        "cub3d.h": "c",
-        "mlx.h": "c",
-        "stdlib.h": "c",
-        "string.h": "c",
-        "murmur_eval.h": "c",
-        "stddef.h": "c",
-        "array": "c",
-        "string": "c",
-        "string_view": "c",
-        "random": "c",
-        "unistd.h": "c",
-        "math.h": "c",
-        "cmath": "c"
-    },
+		"*.c": "c",
+		"cub3d.h": "c",
+		"mlx.h": "c",
+		"stdlib.h": "c",
+		"string.h": "c",
+		"murmur_eval.h": "c",
+		"stddef.h": "c",
+		"array": "c",
+		"string": "c",
+		"string_view": "c",
+		"random": "c",
+		"unistd.h": "c",
+		"math.h": "c",
+		"cmath": "c",
+		"__locale": "c"
+	},
     "functionHeaderExtension.headerFilePath": "/Users/ahbasara/sources/repos/cub3d/src/inc/cub3d.h"
 }

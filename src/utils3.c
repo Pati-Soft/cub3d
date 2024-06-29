@@ -1,37 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/29 03:07:16 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:11:57 by ahbasara         ###   ########.fr       */
+/*   Created: 2024/06/29 04:05:24 by ahbasara          #+#    #+#             */
+/*   Updated: 2024/06/29 04:10:58 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	pm(t_cub3d *const cub3d)
+size_t	arrlen(void const *arr)
 {
-	size_t	i;
+	size_t	c;
 
-	i = 0;
-	while (i < (size_t)ft_lstsize(cub3d->map2))
-	{
-		ft_printf("%s\n", ll_nod(cub3d->map2, i)->content);
-		i++;
-	}
+	c = 0;
+	while (((void **)arr)[c])
+		c++;
+	return (c);
 }
 
-int	init_cub3d(t_cub3d *const cub3d)
+void	free_2d(void *ptr)
 {
-	if (init_mlx(cub3d))
-		return (1);
-	if (map_init(cub3d))
-		return (1);
-	ft_printf("SUCCESSFULLY VALIDATED\n");
-	pm(cub3d);
-	hook_init(cub3d);
-	return (0);
+	size_t	c;
+
+	c = 0;
+	while (((void **)ptr)[c])
+	{
+		free(((void **)ptr)[c]);
+		c++;
+	}
+	free(((void **)ptr));
+	return ;
+}
+
+void	close_err(int const fd)
+{
+	if (close(fd) == -1)
+		eerr(ERR_CLOSE_FD);
+}
+
+void	void_fun(void *content)
+{
+	(void)content;
 }
