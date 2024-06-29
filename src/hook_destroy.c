@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   destroy_hook.c                                     :+:      :+:    :+:   */
+/*   hook_destroy.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 09:12:02 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 03:16:06 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 04:46:42 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	dealloc_cub3d(t_cub3d *const cub3d)
 	destroy_the_textures(cub3d);
 	ft_printf("Window destroyed: %d\n",
 		(mlx_destroy_window(cub3d->mlx, cub3d->win_mlx)));
-	free(cub3d->mlx);
 }
 
 int	destroy_game(t_cub3d *const cub3d)

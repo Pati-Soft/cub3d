@@ -2,7 +2,7 @@
 
 if [ "$#" -eq 0 ]; then
     echo "Running with RUN"
-    make j=1 w=1 map=non_valid_hole run
+	make j=1 w=1 asan=0 msl=1 map=non_valid_hole2 re run
 fi
 
 case $1 in
