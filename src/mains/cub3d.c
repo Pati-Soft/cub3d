@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 09:10:27 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:43:13 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:42:59 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 __attribute__((destructor)) void	destructor(void)
 {
 	printf("Destructor called\n");
-	system("leaks cub3d");
+	// system("leaks cub3d");
 }
 
 void	init_variable(t_cub3d *const cub3d, int argc, char const *argv[])

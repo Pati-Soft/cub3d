@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 03:29:02 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 14:57:58 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:59:37 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,10 @@ void	ft_ray_casting(t_cub3d *const cub3d)
 	while (x < cub3d->screen_buffer.width)
 	{
 		cub3d->ray.camerax = (double)x / (cub3d->screen_buffer.width - 1);
-		cub3d->ray.raydirx = cub3d->player.dirx + (cub3d->ray.planex * \
-			(cub3d->ray.camerax - 0.5) * 2);
-		cub3d->ray.raydiry = cub3d->player.diry + (cub3d->ray.planey * \
-			(cub3d->ray.camerax - 0.5) * 2);
+		cub3d->ray.raydirx = (cub3d->player.dirx + (cub3d->ray.planex * \
+			(cub3d->ray.camerax - 0.5) * 2));
+		cub3d->ray.raydiry = (cub3d->player.diry + (cub3d->ray.planey * \
+			(cub3d->ray.camerax - 0.5) * 2));
 		cub3d->ray.map_y = (int)cub3d->player.posx;
 		cub3d->ray.map_x = (int)cub3d->player.posy;
 		cub3d->ray.deltadistx = fabs(1 / cub3d->ray.raydirx);
