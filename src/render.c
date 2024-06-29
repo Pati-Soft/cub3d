@@ -6,13 +6,13 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 03:29:02 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:34:49 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 14:57:58 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	ft_direction(t_cub3d *const cub3d)
+void	ft_direction(t_cub3d *const cub3d, int const x)
 {
 	if (cub3d->ray.raydirx < 0)
 	{
@@ -38,9 +38,10 @@ void	ft_direction(t_cub3d *const cub3d)
 		cub3d->ray.sidedisty = (cub3d->ray.map_x + 1.0 - cub3d->player.posy)
 			* cub3d->ray.deltadisty;
 	}
+	ft_wallhit(cub3d, x);
 }
 
-void	ft_wallhit(t_cub3d *const cub3d)
+void	ft_wallhit(t_cub3d *const cub3d, int const x)
 {
 	cub3d->ray.wall = 0;
 	while (!cub3d->ray.wall)
@@ -61,9 +62,10 @@ void	ft_wallhit(t_cub3d *const cub3d)
 			[cub3d->ray.map_x] == WALL_CHAR)
 			cub3d->ray.wall = 1;
 	}
+	ft_raydist(cub3d, x);
 }
 
-void	ft_raydist(t_cub3d *const cub3d)
+void	ft_raydist(t_cub3d *const cub3d, int const x)
 {
 	if (cub3d->ray.side == 0)
 		cub3d->ray.perpwalldist = cub3d->ray.sidedistx - cub3d->ray.deltadistx;
@@ -81,13 +83,6 @@ void	ft_raydist(t_cub3d *const cub3d)
 		cub3d->ray.lineheight / 2 + cub3d->screen_buffer.height / 2;
 	if (cub3d->ray.drawend >= cub3d->screen_buffer.height)
 		cub3d->ray.drawend = cub3d->screen_buffer.height - 1;
-}
-
-void	ft_send_ray(t_cub3d *const cub3d, int const x)
-{
-	ft_direction(cub3d);
-	ft_wallhit(cub3d);
-	ft_raydist(cub3d);
 	ft_draw_wall_side(cub3d, x);
 }
 
@@ -113,16 +108,16 @@ void	ft_ray_casting(t_cub3d *const cub3d)
 	x = 0;
 	while (x < cub3d->screen_buffer.width)
 	{
-		cub3d->ray.camerax = 2 * x / (double)cub3d->screen_buffer.width - 1;
-		cub3d->ray.raydirx = cub3d->player.dirx + cub3d->ray.planex
-			* cub3d->ray.camerax;
-		cub3d->ray.raydiry = cub3d->player.diry + cub3d->ray.planey
-			* cub3d->ray.camerax;
+		cub3d->ray.camerax = (double)x / (cub3d->screen_buffer.width - 1);
+		cub3d->ray.raydirx = cub3d->player.dirx + (cub3d->ray.planex * \
+			(cub3d->ray.camerax - 0.5) * 2);
+		cub3d->ray.raydiry = cub3d->player.diry + (cub3d->ray.planey * \
+			(cub3d->ray.camerax - 0.5) * 2);
 		cub3d->ray.map_y = (int)cub3d->player.posx;
 		cub3d->ray.map_x = (int)cub3d->player.posy;
 		cub3d->ray.deltadistx = fabs(1 / cub3d->ray.raydirx);
 		cub3d->ray.deltadisty = fabs(1 / cub3d->ray.raydiry);
-		ft_send_ray(cub3d, x);
+		ft_direction(cub3d, x);
 		x++;
 	}
 }

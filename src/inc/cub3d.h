@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:00:25 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:21:39 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 16:30:52 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,9 +200,9 @@ void		pm(t_cub3d *const cub3d);
 
 /*	RENDER */
 /*		0 */
-void		ft_direction(t_cub3d *const cub3d);
-void		ft_wallhit(t_cub3d *const cub3d);
-void		ft_raydist(t_cub3d *const cub3d);
+void		ft_direction(t_cub3d *const cub3d, int const x);
+void		ft_wallhit(t_cub3d *const cub3d, int const x);
+void		ft_raydist(t_cub3d *const cub3d, int const x);
 void		ft_send_ray(t_cub3d *const cub3d, int const x);
 void		ft_ray_casting(t_cub3d *const cub3d);
 /*		1 */

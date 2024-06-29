@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:40:13 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 03:52:51 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:22:35 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	validate_mid(t_map_init *const map_init, t_cub3d *const cub3d)
 		ft_lstadd_back(&cub3d->map2, ft_lstnew(map_init->buff));
 		map_init->prev = map_init->buff;
 		map_init->buff = get_next_line(map_init->fd);
-		if (map_init->buff == NULL)
+		if (map_init->buff == NULL || *map_init->buff == '\n')
 		{
 			if (validate_row_top(map_init->prev))
 				return (eerr(ERR_UNVALIDATABLE));

@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:00:28 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:21:26 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:04:45 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@
 # define ERR_UNVALIDATABLE4		"relative invalid line 4\n"
 # define ERR_UNVALIDATABLE5		"relative invalid line 5\n"
 # define ERR_MULTIPLAYER			"multiplayer dedect\n"
-
+# define ERR_PLAYER				"player not found\n"
 # define MAP_EXTENSION			".cub"
 # define TEX_EXTENSION			".xpm"
 

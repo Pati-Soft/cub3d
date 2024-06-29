@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:23:39 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:18:44 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:11:02 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	set_value(t_cub3d *const cub3d, t_map_init *const map_init)
 	printf("key: %d, value: %s\n", map_init->key, map_init->trim_value);
 	if (map_init->meta_funcs[map_init->match_types[map_init->key]] \
 		(cub3d, map_init))
-		return (free(map_init->trim_value), FAILURE);
+		return (FAILURE);
 	if (map_init->meta_ct == 0)
 		map_init->cont = 0;
 	return (SUCCESS);
@@ -64,7 +64,7 @@ t_return	set_color(t_cub3d *const cub3d, t_map_init *const map_init)
 {
 	if (set_rgb(map_init->trim_value,
 			&cub3d->gradient[map_init->match_index[map_init->key]]))
-		return (free(map_init->trim_value), eerr(ERR_WRONG_COLOR));
+		return (eerr(ERR_WRONG_COLOR));
 	ft_printf("val: %s\n", map_init->trim_value);
 	free(map_init->trim_value);
 	ft_printf("%d color: %d, %d, %d, %d\n",
@@ -109,7 +109,7 @@ int	load_texture(t_cub3d *const cub3d, char *const path,
 t_return	set_texture(t_cub3d *const cub3d, t_map_init *const map_init)
 {
 	if (check_extension(map_init->trim_value, TEX_EXTENSION))
-		return (free(map_init->trim_value), eerr(ERR_EXT_XPM));
+		return (eerr(ERR_EXT_XPM));
 	ft_printf("map path: %d %s %p\n",
 		map_init->meta_ct, map_init->trim_value,
 		(cub3d->textures)[map_init->meta_ct].img);

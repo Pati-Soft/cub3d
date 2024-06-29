@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 09:12:02 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:46:42 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 14:46:30 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	dealloc_cub3d(t_cub3d *const cub3d)
 int	destroy_game(t_cub3d *const cub3d)
 {
 	dealloc_cub3d(cub3d);
+	printf("exitting\n");
 	exit(0);
 	return (0);
 }

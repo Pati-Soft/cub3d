@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:44:15 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:15:19 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:24:17 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,7 @@ int	map_init(t_cub3d *const cub3d)
 		return (close_err(map_init.fd), 1);
 	if (loop_map(&map_init, cub3d))
 		return (close_err(map_init.fd), clear_map(cub3d), 1);
+	if (cub3d->player.posx == 0)
+		return (close_err(map_init.fd), clear_map(cub3d), eerr(ERR_PLAYER));
 	return (0);
 }
