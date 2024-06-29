@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:40:13 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 17:22:35 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/29 20:24:22 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ int	player_detected(t_cub3d *const cub3d, char *const row, size_t i)
 		[(int)row[i]];
 	cub3d->player.posy += 0.5;
 	cub3d->player.posx += 0.5;
-	cub3d->player.dirx = sin(deg_to_rad(cub3d->player.direction));
-	cub3d->player.diry = cos(deg_to_rad(cub3d->player.direction));
-	cub3d->ray.planex = cos(deg_to_rad(cub3d->player.direction)) * FOV;
-	cub3d->ray.planey = sin(deg_to_rad(cub3d->player.direction)) * FOV;
+	cub3d->player.dirx = cos(deg_to_rad(cub3d->player.direction));
+	cub3d->player.diry = sin(deg_to_rad(cub3d->player.direction));
+	cub3d->ray.planex = cub3d->player.diry * FOV;
+	cub3d->ray.planey = -cub3d->player.dirx * FOV;
 	printf("player: x: %lf, y: %lf, direction: %d\n", cub3d->player.posx,
 		cub3d->player.posy, cub3d->player.direction);
 	row[i] = '0';
