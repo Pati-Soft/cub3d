@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:20:13 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 04:07:00 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/30 16:30:10 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,11 @@ void	ft_draw_wall_side(t_cub3d *const cub3d, int const x)
 {
 	ft_texture_helper(cub3d);
 	if (cub3d->ray.side == 0 && cub3d->ray.raydirx > 0)
-		ft_draw_wall_texture(cub3d, x, 0);
-	else if (cub3d->ray.side == 0 && cub3d->ray.raydirx < 0)
-		ft_draw_wall_texture(cub3d, x, 1);
-	else if (cub3d->ray.side == 1 && cub3d->ray.raydiry > 0)
 		ft_draw_wall_texture(cub3d, x, 2);
-	else
+	else if (cub3d->ray.side == 0 && cub3d->ray.raydirx < 0)
 		ft_draw_wall_texture(cub3d, x, 3);
+	else if (cub3d->ray.side == 1 && cub3d->ray.raydiry > 0)
+		ft_draw_wall_texture(cub3d, x, 1);
+	else
+		ft_draw_wall_texture(cub3d, x, 0);
 }

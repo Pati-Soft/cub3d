@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 13:00:25 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 19:55:47 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/30 16:18:47 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ typedef struct s_cub3d
 	void					*win_mlx;
 
 	char *const				map_name;
-	char *const *const		map;
 	t_list					*map2;
 
 	int						resulation;
@@ -223,8 +222,6 @@ void		ft_move(t_cub3d *const cub3d);
 void		key_left(t_cub3d *const cub3d);
 void		key_right(t_cub3d *const cub3d);
 /*		MOVE */
-void move_horizontal_right(t_cub3d *game, double dirx, double diry);
-void move_horizontal_left(t_cub3d *game, double dirx, double diry);
 
 int			is_character(char const c);
 void		key_w(t_cub3d *const cub3d);

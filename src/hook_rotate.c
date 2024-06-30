@@ -6,7 +6,7 @@
 /*   By: ahbasara <ahbasara@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 04:07:40 by ahbasara          #+#    #+#             */
-/*   Updated: 2024/06/29 18:46:53 by ahbasara         ###   ########.fr       */
+/*   Updated: 2024/06/30 16:19:37 by ahbasara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	key_right(t_cub3d *const cub3d)
 	double	old_dirx;
 	double	old_planex;
 
-	printf("dirx: %f, diry: %f\n", cub3d->player.dirx, cub3d->player.diry);
 	old_dirx = cub3d->player.dirx;
 	cub3d->player.dirx = cub3d->player.dirx * cos(-ROTATION_SPEED) - \
 		cub3d->player.diry * sin(-ROTATION_SPEED);
@@ -35,7 +34,6 @@ void	key_left(t_cub3d *const cub3d)
 	double	old_dirx;
 	double	old_planex;
 
-	printf("dirx: %f, diry: %f\n", cub3d->player.dirx, cub3d->player.diry);
 	old_dirx = cub3d->player.dirx;
 	cub3d->player.dirx = cub3d->player.dirx * cos(ROTATION_SPEED) - \
 		cub3d->player.diry * sin(ROTATION_SPEED);
